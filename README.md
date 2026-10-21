@@ -14,13 +14,13 @@ explicitly download a library pack or a subtitle file.
 
 ## Status
 
-Milestone 1 — corpus, starter library, importers, and subtitle search. Complete.
+Milestone 2 — Reading practice and session logging. Complete.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
 | M0 | Scaffold, theme, settings, database, app shell | Complete |
 | M1 | Corpus, library, PDF/SRT import, 95% rule | Complete |
-| M2 | Reading practice | Planned |
+| M2 | Reading practice | Complete |
 | M3 | Typing practice + 두벌식 keyboard | Planned |
 | M4 | Speak tab + TTS | Planned |
 | M5 | Vitamin Korean 1 curriculum + textbook audio | Planned |
@@ -39,7 +39,7 @@ Milestone 1 — corpus, starter library, importers, and subtitle search. Complet
 ```sh
 xcodegen generate
 xcodebuild -scheme Sori \
-  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   build
 ```
 
@@ -47,7 +47,7 @@ Run tests:
 
 ```sh
 xcodebuild -scheme Sori \
-  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   test
 ```
 
@@ -97,6 +97,24 @@ or foreign-parts-only files. OMDb supplies the IMDb rating. Credentials are stor
 in the iOS Keychain with device-only access and are excluded from backups.
 
 Network access happens only when you explicitly search or download a subtitle.
+
+## Reading practice
+
+Reading draws a shuffled set of up to 120 active library sentences and runs for the
+configured duration (15–300 seconds). The timer starts only after Start. Tap Next
+when a sentence is finished or Previous to revisit one; the furthest completed
+sentence is kept.
+
+A manual End discards the session. When the timer completes, Sori saves the session
+and shows the result. Reading CPM is:
+
+```
+non-whitespace characters in completed sentences ÷ (elapsed seconds ÷ 60)
+```
+
+Punctuation counts as a character; spaces do not. The sentence currently on screen
+is not counted until you advance past it with Next. Completed sessions also record
+sentence exposure for the 95% library-coverage rule.
 
 ## Personal content
 

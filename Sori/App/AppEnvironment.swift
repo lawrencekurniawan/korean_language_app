@@ -8,6 +8,7 @@ final class AppEnvironment {
     let settings: SettingsStore
     let library: LibraryRepository
     let importer: CorpusImporter
+    let practice: PracticeRepository
     let startupError: String?
 
     var libraryStatus: LibraryStatus = .unknown
@@ -21,6 +22,7 @@ final class AppEnvironment {
         self.startupError = startupError
         self.library = LibraryRepository(database: database)
         self.importer = CorpusImporter(database: database)
+        self.practice = PracticeRepository(database: database)
     }
 
     var isSeedingLibrary: Bool {

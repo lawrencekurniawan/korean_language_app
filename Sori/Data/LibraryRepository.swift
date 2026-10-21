@@ -117,22 +117,30 @@ struct LibraryRepository: Sendable {
     }
 
     func recordExposure(sentenceIDs: [Int64], surface: String) async throws {
+        try await database.dbQueue.write { db in
+            try Self.recordExposure(sentenceIDs: sentenceIDs, surface: surface, in: db)
+        }
+    }
+
+    static func recordExposure(
+        sentenceIDs: [Int64],
+        surface: String,
+        in db: Database
+    ) throws {
         let uniqueIDs = Array(Set(sentenceIDs))
         guard !uniqueIDs.isEmpty else { return }
 
-        try await database.dbQueue.write { db in
-            let statement = try db.makeStatement(sql: """
-                INSERT INTO sentenceExposure (sentenceId, lastSeenAt, count, lastSurface)
-                VALUES (?, ?, 1, ?)
-                ON CONFLICT(sentenceId) DO UPDATE SET
-                    lastSeenAt = excluded.lastSeenAt,
-                    count = sentenceExposure.count + 1,
-                    lastSurface = excluded.lastSurface
-                """)
-            let now = Date()
-            for id in uniqueIDs {
-                try statement.execute(arguments: [id, now, surface])
-            }
+        let statement = try db.makeStatement(sql: """
+            INSERT INTO sentenceExposure (sentenceId, lastSeenAt, count, lastSurface)
+            VALUES (?, ?, 1, ?)
+            ON CONFLICT(sentenceId) DO UPDATE SET
+                lastSeenAt = excluded.lastSeenAt,
+                count = sentenceExposure.count + 1,
+                lastSurface = excluded.lastSurface
+            """)
+        let now = Date()
+        for id in uniqueIDs {
+            try statement.execute(arguments: [id, now, surface])
         }
     }
 

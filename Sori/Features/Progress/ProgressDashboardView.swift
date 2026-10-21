@@ -22,10 +22,14 @@ struct ProgressDashboardView: View {
             }
             .soriScreenBackground()
             .navigationTitle("Progress")
-            .task {
-                stats = (try? await env.database.dashboardStats()) ?? .empty
+            .onAppear {
+                Task { await loadStats() }
             }
         }
+    }
+
+    private func loadStats() async {
+        stats = (try? await env.database.dashboardStats()) ?? .empty
     }
 
     private var chartCard: some View {
