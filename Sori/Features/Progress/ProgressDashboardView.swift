@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ProgressView: View {
+struct ProgressDashboardView: View {
     @Environment(AppEnvironment.self) private var env
 
     @State private var stats: DashboardStats = .empty

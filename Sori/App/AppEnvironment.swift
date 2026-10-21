@@ -6,12 +6,66 @@ import Observation
 final class AppEnvironment {
     let database: AppDatabase
     let settings: SettingsStore
+    let library: LibraryRepository
+    let importer: CorpusImporter
     let startupError: String?
+
+    var libraryStatus: LibraryStatus = .unknown
+    private(set) var librarySummary: LibrarySummary?
+    private(set) var libraryRevision = 0
+    private var isPreparingLibrary = false
 
     init(database: AppDatabase, settings: SettingsStore, startupError: String? = nil) {
         self.database = database
         self.settings = settings
         self.startupError = startupError
+        self.library = LibraryRepository(database: database)
+        self.importer = CorpusImporter(database: database)
+    }
+
+    var isSeedingLibrary: Bool {
+        if case .seeding = libraryStatus { return true }
+        return false
+    }
+
+    var libraryFailure: String? {
+        if case .failed(let message) = libraryStatus { return message }
+        return nil
+    }
+
+    func prepareLibrary() async {
+        guard !isPreparingLibrary else { return }
+        if case .ready = libraryStatus, librarySummary != nil { return }
+
+        isPreparingLibrary = true
+        libraryStatus = .seeding
+
+        do {
+            let result = try await SeedLibraryLoader(
+                database: database,
+                importer: importer
+            ).seedIfNeeded()
+            librarySummary = try await library.summary()
+            libraryStatus = .ready(result)
+        } catch {
+            libraryStatus = .failed(error.localizedDescription)
+            librarySummary = try? await library.summary()
+        }
+
+        libraryRevision += 1
+        isPreparingLibrary = false
+    }
+
+    func refreshLibrary() async {
+        guard !isPreparingLibrary else { return }
+        if let summary = try? await library.summary() {
+            librarySummary = summary
+        }
+        libraryRevision += 1
+    }
+
+    func libraryDidChange() async {
+        await refreshLibrary()
     }
 
     static func live() -> AppEnvironment {

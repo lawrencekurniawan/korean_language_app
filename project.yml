@@ -29,6 +29,9 @@ packages:
   GRDB:
     url: https://github.com/groue/GRDB.swift
     exactVersion: 7.11.1
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation
+    exactVersion: 0.9.20
 
 targets:
   Sori:
@@ -41,6 +44,7 @@ targets:
           - "**/.DS_Store"
     dependencies:
       - package: GRDB
+      - package: ZIPFoundation
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.lawrencekurniawan.sori
@@ -66,6 +70,7 @@ targets:
       - path: SoriTests
     dependencies:
       - target: Sori
+      - package: ZIPFoundation
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.lawrencekurniawan.sori.tests

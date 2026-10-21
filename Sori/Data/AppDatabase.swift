@@ -61,6 +61,26 @@ final class AppDatabase: Sendable {
         }
     }
 
+    // MARK: - Metadata
+
+    func metaValue(forKey key: String) async throws -> String? {
+        try await dbQueue.read { db in
+            try String.fetchOne(db, sql: "SELECT value FROM appMeta WHERE key = ?", arguments: [key])
+        }
+    }
+
+    func setMetaValue(_ value: String, forKey key: String) async throws {
+        try await dbQueue.write { db in
+            try db.execute(
+                sql: """
+                    INSERT INTO appMeta (key, value) VALUES (?, ?)
+                    ON CONFLICT(key) DO UPDATE SET value = excluded.value
+                    """,
+                arguments: [key, value]
+            )
+        }
+    }
+
     // MARK: - Dashboard
 
     func dashboardStats() async throws -> DashboardStats {

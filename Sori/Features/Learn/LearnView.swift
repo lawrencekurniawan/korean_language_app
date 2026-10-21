@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct LearnView: View {
+    @Environment(AppEnvironment.self) private var env
+
     @AppStorage("learn.roadmapExpanded") private var roadmapExpanded = false
     @State private var showingLessonPreview = false
 
@@ -10,6 +12,9 @@ struct LearnView: View {
                 VStack(spacing: SoriSpacing.lg) {
                     continueCard
                     reviewCard
+                    if let summary = env.librarySummary, summary.needsMoreContent {
+                        coveragePrompt(summary)
+                    }
                     roadmapCard
                     footnote
                 }
@@ -21,7 +26,45 @@ struct LearnView: View {
             .sheet(isPresented: $showingLessonPreview) {
                 LessonPreviewSheet()
             }
+            .task {
+                if env.librarySummary == nil {
+                    await env.refreshLibrary()
+                }
+            }
         }
+    }
+
+    private func coveragePrompt(_ summary: LibrarySummary) -> some View {
+        NavigationLink {
+            LibraryView()
+        } label: {
+            SoriCard {
+                HStack(alignment: .center, spacing: SoriSpacing.md) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(Color.soriWarning)
+                        .frame(width: 42, height: 42)
+                        .background(Color.soriWarning.opacity(0.12), in: Circle())
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Library covered")
+                            .font(SoriFont.headline)
+                            .foregroundStyle(Color.soriInk)
+                        Text("You've seen \(Int((summary.coverage * 100).rounded()))% of your active sentences. Add more real Korean to keep practice varied.")
+                            .font(SoriFont.caption)
+                            .foregroundStyle(Color.soriSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    Spacer(minLength: 0)
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Color.soriTertiary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
     }
 
     private var continueCard: some View {

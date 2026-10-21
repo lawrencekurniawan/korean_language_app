@@ -35,3 +35,7 @@ Secrets.xcconfig
 
 # Generated project (project.yml is the source of truth)
 Sori.xcodeproj/
+
+# Python
+__pycache__/
+*.pyc

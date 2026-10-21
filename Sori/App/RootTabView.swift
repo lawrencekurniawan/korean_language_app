@@ -32,6 +32,69 @@ struct RootTabView: View {
     }
 
     var body: some View {
+        root
+            .safeAreaInset(edge: .top, spacing: 0) {
+                VStack(spacing: 0) {
+                    if let error = env.startupError {
+                        StartupErrorBanner(message: error)
+                    }
+                    if env.isSeedingLibrary {
+                        LibrarySeedBanner()
+                    }
+                }
+            }
+            .overlay {
+                if splash.isPresented {
+                    DailySplashView(
+                        stats: splash.stats,
+                        autoCloseSeconds: env.settings.splashAutoCloseSeconds,
+                        onClose: { splash.dismiss() }
+                    )
+                    .transition(.opacity)
+                    .zIndex(10)
+                }
+            }
+            .animation(.easeInOut(duration: 0.22), value: splash.isPresented)
+            .task {
+                await env.prepareLibrary()
+            }
+            .task {
+                await splash.handleBecameActive(
+                    settings: env.settings,
+                    database: env.database
+                )
+            }
+            .onChange(of: scenePhase) { _, phase in
+                guard phase == .active else { return }
+                Task {
+                    await splash.handleBecameActive(
+                        settings: env.settings,
+                        database: env.database
+                    )
+                }
+            }
+    }
+
+    @ViewBuilder
+    private var root: some View {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--library") {
+            NavigationStack {
+                LibraryView()
+            }
+        } else if ProcessInfo.processInfo.arguments.contains("--sources") {
+            NavigationStack {
+                SourcesSettingsView()
+            }
+        } else {
+            tabs
+        }
+        #else
+        tabs
+        #endif
+    }
+
+    private var tabs: some View {
         TabView(selection: $selection) {
             Tab("Learn", systemImage: "book.closed", value: AppTab.learn) {
                 LearnView()
@@ -43,42 +106,10 @@ struct RootTabView: View {
                 SpeakView()
             }
             Tab("Progress", systemImage: "chart.xyaxis.line", value: AppTab.progress) {
-                ProgressView()
+                ProgressDashboardView()
             }
             Tab("Settings", systemImage: "gearshape", value: AppTab.settings) {
                 SettingsView()
-            }
-        }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            if let error = env.startupError {
-                StartupErrorBanner(message: error)
-            }
-        }
-        .overlay {
-            if splash.isPresented {
-                DailySplashView(
-                    stats: splash.stats,
-                    autoCloseSeconds: env.settings.splashAutoCloseSeconds,
-                    onClose: { splash.dismiss() }
-                )
-                .transition(.opacity)
-                .zIndex(10)
-            }
-        }
-        .animation(.easeInOut(duration: 0.22), value: splash.isPresented)
-        .task {
-            await splash.handleBecameActive(
-                settings: env.settings,
-                database: env.database
-            )
-        }
-        .onChange(of: scenePhase) { _, phase in
-            guard phase == .active else { return }
-            Task {
-                await splash.handleBecameActive(
-                    settings: env.settings,
-                    database: env.database
-                )
             }
         }
     }
@@ -99,5 +130,20 @@ private struct StartupErrorBanner: View {
         .padding(SoriSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.soriWarning.opacity(0.14))
+    }
+}
+
+private struct LibrarySeedBanner: View {
+    var body: some View {
+        HStack(spacing: SoriSpacing.xs) {
+            ProgressView()
+                .controlSize(.small)
+            Text("Preparing your starter library…")
+                .font(SoriFont.caption)
+                .foregroundStyle(Color.soriInk)
+            Spacer(minLength: 0)
+        }
+        .padding(SoriSpacing.sm)
+        .background(Color.soriSurface)
     }
 }

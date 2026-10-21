@@ -95,7 +95,16 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    LabeledContent("Library", value: "0 KB of 2 MB")
+                    NavigationLink {
+                        LibraryView()
+                    } label: {
+                        LabeledContent("Library", value: libraryValue)
+                    }
+                    NavigationLink {
+                        SourcesSettingsView()
+                    } label: {
+                        LabeledContent("Subtitle sources", value: sourcesValue)
+                    }
                     LabeledContent("Backup", value: "Not configured")
                     LabeledContent(
                         "Last backup",
@@ -104,7 +113,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Library & backup")
                 } footer: {
-                    Text("Library management arrives in M1. Backup and restore arrive in M8.")
+                    Text("Sori keeps a local copy of real Korean reading material. Backup and restore arrive in M8.")
                 }
 
                 Section {
@@ -168,6 +177,16 @@ struct SettingsView: View {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+
+    private var libraryValue: String {
+        guard let summary = env.librarySummary else { return "Preparing…" }
+        return "\(TextNormalizer.formatBytes(summary.totalBytes)) of 2 MB"
+    }
+
+    private var sourcesValue: String {
+        let hasKey = !(SecretStore.shared.value(for: .openSubtitlesAPIKey) ?? "").isEmpty
+        return hasKey ? "Configured" : "Not configured"
     }
 }
 
