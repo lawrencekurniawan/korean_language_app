@@ -17,6 +17,7 @@ final class SettingsStoreTests: XCTestCase {
             XCTAssertEqual(store.splashAutoCloseSeconds, 3)
             XCTAssertEqual(store.keyboardMode, .builtIn)
             XCTAssertTrue(store.speakAutoMode)
+            XCTAssertEqual(store.voiceIdentifier, "")
             XCTAssertEqual(store.speechRate, 0.5)
             XCTAssertEqual(store.repeatCount, 1)
         }
@@ -32,6 +33,8 @@ final class SettingsStoreTests: XCTestCase {
             first.splashEnabled = false
             first.splashAutoCloseSeconds = 5
             first.keyboardMode = .system
+            first.speakAutoMode = false
+            first.voiceIdentifier = "com.apple.voice.enhanced.ko-KR.Yuna"
             first.speechRate = 0.65
             first.repeatCount = 3
 
@@ -44,6 +47,8 @@ final class SettingsStoreTests: XCTestCase {
             XCTAssertFalse(second.splashEnabled)
             XCTAssertEqual(second.splashAutoCloseSeconds, 5)
             XCTAssertEqual(second.keyboardMode, .system)
+            XCTAssertFalse(second.speakAutoMode)
+            XCTAssertEqual(second.voiceIdentifier, "com.apple.voice.enhanced.ko-KR.Yuna")
             XCTAssertEqual(second.speechRate, 0.65)
             XCTAssertEqual(second.repeatCount, 3)
         }
@@ -68,12 +73,18 @@ final class SettingsStoreTests: XCTestCase {
             store.appearance = .dark
             store.readingDuration = 150
             store.keyboardMode = .system
+            store.voiceIdentifier = "voice"
+            store.speechRate = 0.7
+            store.repeatCount = 4
 
             store.resetToDefaults()
 
             XCTAssertEqual(store.appearance, .system)
             XCTAssertEqual(store.readingDuration, 60)
             XCTAssertEqual(store.keyboardMode, .builtIn)
+            XCTAssertEqual(store.voiceIdentifier, "")
+            XCTAssertEqual(store.speechRate, 0.5)
+            XCTAssertEqual(store.repeatCount, 1)
         }
     }
 

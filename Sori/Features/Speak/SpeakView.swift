@@ -2,11 +2,16 @@ import SwiftUI
 
 struct SpeakView: View {
     @Environment(AppEnvironment.self) private var env
-    @State private var customText = ""
-    @State private var showingVoiceSettings = false
+    @Environment(\.scenePhase) private var scenePhase
 
-    private let samplePhrase = "안녕하세요. 만나서 반갑습니다."
-    private let sampleWords = ["안녕하세요", "만나서", "반갑습니다"]
+    @State private var customText = ""
+    @State private var autoPhrase: String?
+    @State private var isLoadingPhrase = false
+    @State private var hasLoadedPhrase = false
+    @State private var showingVoiceSettings = false
+    @State private var alertTitle = "Audio unavailable"
+    @State private var alertMessage: String?
+    @State private var player = SpeakPlayer()
 
     var body: some View {
         @Bindable var settings = env.settings
@@ -17,9 +22,9 @@ struct SpeakView: View {
                     autoRow(settings: settings)
 
                     if settings.speakAutoMode {
-                        phraseCard
+                        phraseSection(settings: settings)
                     } else {
-                        customTextCard
+                        customTextCard(settings: settings)
                     }
 
                     controlsCard(settings: settings)
@@ -36,11 +41,70 @@ struct SpeakView: View {
                     } label: {
                         Image(systemName: "slider.horizontal.3")
                     }
+                    .accessibilityLabel("Voice settings")
                 }
             }
             .sheet(isPresented: $showingVoiceSettings) {
-                VoiceSettingsSheet(settings: settings)
+                VoiceSettingsSheet(settings: settings, player: player)
             }
+        }
+        .task {
+            if env.settings.speakAutoMode {
+                await loadPhraseIfNeeded()
+            }
+
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--speak-voice-settings") {
+                showingVoiceSettings = true
+            }
+            if ProcessInfo.processInfo.arguments.contains("--speak-play") {
+                let text = env.settings.speakAutoMode ? (autoPhrase ?? "") : customText
+                if !text.isEmpty {
+                    player.play(
+                        text,
+                        repeatCount: env.settings.repeatCount,
+                        voiceIdentifier: env.settings.voiceIdentifier,
+                        rate: env.settings.speechRate
+                    )
+                }
+            }
+            #endif
+        }
+        .onChange(of: settings.speakAutoMode) { _, isAuto in
+            player.stop()
+            if isAuto {
+                Task { await loadPhraseIfNeeded() }
+            }
+        }
+        .onChange(of: env.libraryRevision) { _, _ in
+            guard env.settings.speakAutoMode, autoPhrase == nil, !isLoadingPhrase else {
+                return
+            }
+            Task { await loadPhrase() }
+        }
+        .onChange(of: player.errorMessage) { _, message in
+            guard let message else { return }
+            alertTitle = "Audio unavailable"
+            alertMessage = message
+            player.clearError()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase != .active else { return }
+            player.stop()
+        }
+        .onDisappear {
+            player.stop()
+        }
+        .alert(
+            alertTitle,
+            isPresented: Binding(
+                get: { alertMessage != nil },
+                set: { if !$0 { alertMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(alertMessage ?? "")
         }
     }
 
@@ -51,7 +115,7 @@ struct SpeakView: View {
                     Text("Auto")
                         .font(SoriFont.headline)
                         .foregroundStyle(Color.soriInk)
-                    Text(settings.speakAutoMode ? "Phrases from your library" : "Your own Korean text")
+                    Text(settings.speakAutoMode ? "Short phrases from your library" : "Your own Korean text")
                         .font(SoriFont.caption)
                         .foregroundStyle(Color.soriSecondary)
                 }
@@ -65,54 +129,92 @@ struct SpeakView: View {
         }
     }
 
-    private var phraseCard: some View {
-        SoriCard {
-            VStack(alignment: .leading, spacing: SoriSpacing.md) {
-                HStack {
-                    SoriBadge(text: "Phrase 1")
-                    Spacer()
-                    Text("≤ 10 eojeol")
-                        .font(SoriFont.caption)
+    @ViewBuilder
+    private func phraseSection(settings: SettingsStore) -> some View {
+        if let autoPhrase {
+            phraseCard(autoPhrase, settings: settings)
+        } else if isLoadingPhrase {
+            SoriCard {
+                HStack(spacing: SoriSpacing.sm) {
+                    ProgressView()
+                    Text("Choosing a short library phrase…")
+                        .font(SoriFont.body)
                         .foregroundStyle(Color.soriSecondary)
                 }
-
-                Text(samplePhrase)
-                    .font(SoriFont.korean(env.settings.speakFontSize))
-                    .foregroundStyle(Color.soriInk)
-                    .lineSpacing(env.settings.speakFontSize * 0.35)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                FlowingWords(words: sampleWords)
-
-                Text("Yuna · ko-KR · 1×")
-                    .font(SoriFont.caption)
-                    .foregroundStyle(Color.soriSecondary)
-
-                HStack(spacing: SoriSpacing.sm) {
-                    Button {} label: {
-                        Label("Play phrase", systemImage: "play.fill")
-                    }
-                    .buttonStyle(SoriPrimaryButtonStyle())
-                    .disabled(true)
-                    .opacity(0.55)
-
-                    Button {} label: {
-                        Image(systemName: "arrow.right")
-                    }
-                    .buttonStyle(SoriSecondaryButtonStyle(fullWidth: false))
-                    .disabled(true)
-                    .opacity(0.55)
+            }
+        } else if hasLoadedPhrase {
+            SoriCard {
+                SoriEmptyState(
+                    symbol: "text.quote",
+                    title: "No short phrases yet",
+                    message: "Auto mode uses complete Korean phrases of ten eojeol or fewer. Add Korean text in Library, then try again."
+                )
+                Button("Try again") {
+                    Task { await loadPhrase() }
                 }
-
-                Text("Audio playback arrives in M4. Tap a word to hear it separately once enabled.")
-                    .font(SoriFont.caption)
-                    .foregroundStyle(Color.soriSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                .buttonStyle(SoriSecondaryButtonStyle())
             }
         }
     }
 
-    private var customTextCard: some View {
+    private func phraseCard(_ phrase: String, settings: SettingsStore) -> some View {
+        SoriCard {
+            VStack(alignment: .leading, spacing: SoriSpacing.md) {
+                HStack {
+                    SoriBadge(text: "Library phrase")
+                    Spacer()
+                    Text("\(KoreanText.eojeolCount(phrase)) / 10 eojeol")
+                        .font(SoriFont.caption)
+                        .foregroundStyle(Color.soriSecondary)
+                }
+
+                Text(phrase)
+                    .font(SoriFont.korean(settings.speakFontSize))
+                    .foregroundStyle(Color.soriInk)
+                    .lineSpacing(settings.speakFontSize * 0.35)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("speak-phrase")
+
+                WordFlow(
+                    words: KoreanText.words(in: phrase),
+                    activeWord: player.isSpeaking ? player.speakingText : nil
+                ) { word in
+                    speakWord(word, settings: settings)
+                }
+
+                HStack(spacing: SoriSpacing.sm) {
+                    Button {
+                        if player.isSpeaking {
+                            player.stop()
+                        } else {
+                            playPhrase(phrase, settings: settings)
+                        }
+                    } label: {
+                        Label(
+                            player.isSpeaking ? "Stop" : "Play phrase",
+                            systemImage: player.isSpeaking ? "stop.fill" : "play.fill"
+                        )
+                    }
+                    .buttonStyle(SoriPrimaryButtonStyle())
+
+                    Button {
+                        Task { await loadPhrase() }
+                    } label: {
+                        Image(systemName: "arrow.right")
+                    }
+                    .buttonStyle(SoriSecondaryButtonStyle(fullWidth: false))
+                    .disabled(isLoadingPhrase)
+                    .accessibilityLabel("Next phrase")
+                }
+
+                Text("Tap any word to hear it on its own.")
+                    .font(SoriFont.caption)
+                    .foregroundStyle(Color.soriSecondary)
+            }
+        }
+    }
+
+    private func customTextCard(settings: SettingsStore) -> some View {
         SoriCard {
             VStack(alignment: .leading, spacing: SoriSpacing.sm) {
                 Text("Your text")
@@ -120,26 +222,52 @@ struct SpeakView: View {
                     .foregroundStyle(Color.soriInk)
 
                 TextEditor(text: $customText)
-                    .font(SoriFont.korean(24))
+                    .font(SoriFont.korean(settings.speakFontSize))
                     .frame(minHeight: 130)
                     .scrollContentBackground(.hidden)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
                     .padding(SoriSpacing.sm)
                     .background(Color.soriSurfaceElevated, in: RoundedRectangle(cornerRadius: 14))
                     .overlay(alignment: .topLeading) {
                         if customText.isEmpty {
                             Text("Paste Korean text here…")
-                                .font(SoriFont.korean(24))
+                                .font(SoriFont.korean(settings.speakFontSize))
                                 .foregroundStyle(Color.soriTertiary)
                                 .padding(.horizontal, SoriSpacing.md)
                                 .padding(.vertical, SoriSpacing.md)
                                 .allowsHitTesting(false)
                         }
                     }
+                    .accessibilityIdentifier("speak-custom-text")
 
-                Button("Pronounce") {}
-                    .buttonStyle(SoriPrimaryButtonStyle())
-                    .disabled(true)
-                    .opacity(0.55)
+                if !customText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    WordFlow(
+                        words: KoreanText.words(in: customText),
+                        activeWord: player.isSpeaking ? player.speakingText : nil
+                    ) { word in
+                        speakWord(word, settings: settings)
+                    }
+
+                    Text("Tap a word to hear it on its own.")
+                        .font(SoriFont.caption)
+                        .foregroundStyle(Color.soriSecondary)
+                }
+
+                Button {
+                    if player.isSpeaking {
+                        player.stop()
+                    } else {
+                        playPhrase(customText, settings: settings)
+                    }
+                } label: {
+                    Label(
+                        player.isSpeaking ? "Stop" : "Pronounce",
+                        systemImage: player.isSpeaking ? "stop.fill" : "speaker.wave.2.fill"
+                    )
+                }
+                .buttonStyle(SoriPrimaryButtonStyle())
+                .disabled(customText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }
     }
@@ -147,20 +275,34 @@ struct SpeakView: View {
     private func controlsCard(settings: SettingsStore) -> some View {
         SoriCard {
             VStack(spacing: 0) {
-                Text("Playback")
-                    .font(SoriFont.headline)
-                    .foregroundStyle(Color.soriInk)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, SoriSpacing.sm)
+                HStack {
+                    Text("Playback")
+                        .font(SoriFont.headline)
+                        .foregroundStyle(Color.soriInk)
+                    Spacer()
+                    Button("Change") {
+                        showingVoiceSettings = true
+                    }
+                    .font(SoriFont.captionStrong)
+                    .foregroundStyle(Color.soriAccent)
+                }
+                .padding(.bottom, SoriSpacing.sm)
 
-                settingRow("Voice", value: "Yuna (system)")
-                Divider().overlay(Color.soriBorder)
-                settingRow("Speed", value: String(format: "%.2f×", settings.speechRate / 0.5))
-                Divider().overlay(Color.soriBorder)
                 settingRow(
-                    "Repeat",
-                    value: settings.repeatCount == 0 ? "Loop" : "\(settings.repeatCount)×"
+                    "Voice",
+                    value: player.resolvedVoice(for: settings.voiceIdentifier)?.displayName
+                        ?? "No Korean voice"
                 )
+                Divider().overlay(Color.soriBorder)
+                settingRow("Speed", value: rateLabel(settings.speechRate))
+                Divider().overlay(Color.soriBorder)
+                settingRow("Repeat", value: repeatLabel(settings.repeatCount))
+
+                Text("Speech is generated on-device by Apple. Nothing is uploaded or logged.")
+                    .font(SoriFont.caption)
+                    .foregroundStyle(Color.soriSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, SoriSpacing.md)
             }
         }
     }
@@ -174,27 +316,102 @@ struct SpeakView: View {
             Text(value)
                 .font(SoriFont.callout)
                 .foregroundStyle(Color.soriSecondary)
+                .multilineTextAlignment(.trailing)
         }
         .padding(.vertical, 11)
+    }
+
+    private func playPhrase(_ text: String, settings: SettingsStore) {
+        player.play(
+            text,
+            repeatCount: settings.repeatCount,
+            voiceIdentifier: settings.voiceIdentifier,
+            rate: settings.speechRate
+        )
+    }
+
+    private func speakWord(_ word: String, settings: SettingsStore) {
+        player.play(
+            word,
+            repeatCount: 1,
+            voiceIdentifier: settings.voiceIdentifier,
+            rate: settings.speechRate
+        )
+    }
+
+    private func rateLabel(_ rate: Double) -> String {
+        String(format: "%.2f×", rate / 0.5)
+    }
+
+    private func repeatLabel(_ count: Int) -> String {
+        count == 0 ? "Loop" : "\(count)×"
+    }
+
+    private func loadPhraseIfNeeded() async {
+        guard autoPhrase == nil, !isLoadingPhrase else { return }
+        await loadPhrase()
+    }
+
+    @MainActor
+    private func loadPhrase() async {
+        guard !isLoadingPhrase else { return }
+        isLoadingPhrase = true
+        player.stop()
+        defer {
+            isLoadingPhrase = false
+            hasLoadedPhrase = true
+        }
+
+        do {
+            let candidates = try await env.library.randomSentences(limit: 500)
+            let eligible = candidates
+                .map(\.text)
+                .filter { KoreanText.isNaturalPhrase($0) }
+            let preferred = eligible.filter {
+                (3...7).contains(KoreanText.eojeolCount($0))
+            }
+            let base = preferred.isEmpty ? eligible : preferred
+            let choices = base.filter { $0 != autoPhrase }
+            let pool = choices.isEmpty ? base : choices
+
+            guard let next = pool.randomElement() else {
+                autoPhrase = nil
+                return
+            }
+
+            autoPhrase = next
+        } catch {
+            alertTitle = "Could not load a phrase"
+            alertMessage = "Could not load a library phrase. \(error.localizedDescription)"
+        }
     }
 }
 
 // MARK: - Word chips
 
-private struct FlowingWords: View {
+private struct WordFlow: View {
     let words: [String]
+    let activeWord: String?
+    let onTap: (String) -> Void
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: SoriSpacing.xs) {
-                ForEach(Array(words.enumerated()), id: \.offset) { _, word in
+        WordFlowLayout(spacing: 8, lineSpacing: 8) {
+            ForEach(Array(words.enumerated()), id: \.offset) { _, word in
+                Button {
+                    onTap(word)
+                } label: {
                     Text(word)
                         .font(SoriFont.korean(17))
                         .foregroundStyle(Color.soriInk)
                         .padding(.horizontal, SoriSpacing.sm)
                         .padding(.vertical, 7)
-                        .background(Color.soriAccent.opacity(0.10), in: Capsule())
+                        .background(
+                            Color.soriAccent.opacity(activeWord == word ? 0.24 : 0.10),
+                            in: Capsule()
+                        )
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Hear \(word)")
             }
         }
     }
@@ -205,16 +422,46 @@ private struct FlowingWords: View {
 private struct VoiceSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     let settings: SettingsStore
+    let player: SpeakPlayer
+
+    private var unavailableVoiceIdentifier: String? {
+        let identifier = settings.voiceIdentifier
+        guard !identifier.isEmpty,
+              !player.voices.contains(where: { $0.id == identifier }) else {
+            return nil
+        }
+        return identifier
+    }
 
     var body: some View {
         @Bindable var settings = settings
 
         NavigationStack {
             Form {
-                Section("Voice") {
-                    LabeledContent("Speaker", value: "Yuna")
-                    LabeledContent("Language", value: "Korean (ko-KR)")
-                    LabeledContent("Quality", value: "System default")
+                Section {
+                    Picker("Voice", selection: $settings.voiceIdentifier) {
+                        Text("Automatic (prefer Yuna Enhanced)").tag("")
+                        if let unavailableVoiceIdentifier {
+                            Text("Unavailable voice").tag(unavailableVoiceIdentifier)
+                        }
+                        ForEach(player.voices) { voice in
+                            Text(voice.displayName).tag(voice.id)
+                        }
+                    }
+
+                    if let voice = player.resolvedVoice(for: settings.voiceIdentifier) {
+                        LabeledContent("Using", value: voice.displayName)
+                        LabeledContent("Quality", value: voice.quality.title)
+                        LabeledContent("Language", value: voice.language)
+                    } else {
+                        Text("No Korean voice is installed. Add one in iOS Settings.")
+                            .font(SoriFont.caption)
+                            .foregroundStyle(Color.soriWarning)
+                    }
+                } header: {
+                    Text("Voice")
+                } footer: {
+                    Text("Sori prefers Apple's Yuna Enhanced voice. Install it in iOS Settings → Accessibility → Spoken Content → Voices → Korean, then choose Yuna. Standard and enhanced voices both work offline.")
                 }
 
                 Section("Speed") {
@@ -241,9 +488,25 @@ private struct VoiceSettingsSheet: View {
                 }
 
                 Section {
-                    Text("Voice selection and playback arrive in M4. Apple Yuna Enhanced is the default; install the enhanced voice in iOS Settings → Accessibility → Spoken Content → Voices → Korean.")
-                        .font(SoriFont.caption)
-                        .foregroundStyle(Color.soriSecondary)
+                    Button {
+                        player.play(
+                            "안녕하세요. 만나서 반갑습니다.",
+                            repeatCount: 1,
+                            voiceIdentifier: settings.voiceIdentifier,
+                            rate: settings.speechRate
+                        )
+                    } label: {
+                        Label("Test voice", systemImage: "speaker.wave.2.fill")
+                    }
+                    .disabled(player.voices.isEmpty)
+
+                    if player.isSpeaking {
+                        Button("Stop") {
+                            player.stop()
+                        }
+                    }
+                } footer: {
+                    Text("Tap a word in a phrase to hear just that word. Full phrases follow the repeat setting.")
                 }
             }
             .navigationTitle("Voice settings")
@@ -253,6 +516,9 @@ private struct VoiceSettingsSheet: View {
                     Button("Done") { dismiss() }
                 }
             }
+        }
+        .onDisappear {
+            player.stop()
         }
     }
 }

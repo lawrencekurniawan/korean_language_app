@@ -14,7 +14,7 @@ explicitly download a library pack or a subtitle file.
 
 ## Status
 
-Milestone 3 — Typing practice, Hangul composition, and the built-in 두벌식 keyboard. Complete.
+Milestone 4 — Speak practice with on-device text-to-speech. Complete.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
@@ -22,7 +22,7 @@ Milestone 3 — Typing practice, Hangul composition, and the built-in 두벌식 
 | M1 | Corpus, library, PDF/SRT import, 95% rule | Complete |
 | M2 | Reading practice | Complete |
 | M3 | Typing practice + 두벌식 keyboard | Complete |
-| M4 | Speak tab + TTS | Planned |
+| M4 | Speak tab + TTS | Complete |
 | M5 | Vitamin Korean 1 curriculum + textbook audio | Planned |
 | M6 | Spaced repetition review | Planned |
 | M7 | Progress charts, session management, time tracking | Planned |
@@ -76,8 +76,8 @@ articles** (about 1.7 MB of text and 9,600 sentences) from Korean Wikipedia
 source, URL, licence, and attribution. The library is seeded once on first launch
 and can be extended by import.
 
-The library targets 2 MB of text and enforces a 10 MB hard cap. Reading, Typing,
-and Speak record sentence exposure; at 95% coverage Sori prompts for more real
+The library targets 2 MB of text and enforces a 10 MB hard cap. Reading and
+Typing record sentence exposure; at 95% coverage Sori prompts for more real
 content instead of starting to repeat the same sentences.
 
 ### Importing
@@ -141,6 +141,26 @@ Gross CPM and accuracy are stored as well. Spaces are excluded from both CPM val
 errors never enter the net numerator. A manual End discards the session. When the
 timer completes, or when the last sentence is finished, Sori saves the session,
 records exposures up to the furthest sentence shown, and displays the result.
+
+## Speak practice
+
+Speak has two modes. **Auto** draws a short, natural phrase from the library: at
+most 10 eojeol, preferring 3–7, with digits, Hanja, jamo, brackets, and
+notation-heavy text filtered out. **Manual** lets you type or paste your own
+Korean text. Switching modes never clears the phrase you are working on.
+
+Tap any word chip to hear that word once. Tap **Play phrase** to hear the whole
+phrase with the saved repeat setting: 1–5 times, or loop until you press Stop.
+Voice, speed, repeat, and the Speak font size persist across launches.
+
+Speech is synthesised on-device by Apple's `AVSpeechSynthesizer` behind a small
+`SpeechEngine` protocol, so a neural engine can replace it later. Sori prefers a
+Korean Yuna voice, then the highest-quality Korean voice installed on the device.
+The Settings sheet lists every Korean voice, including Enhanced and Premium
+voices once they are downloaded in iOS Settings.
+
+Speak never writes practice sessions, exposure records, or analytics. Nothing is
+uploaded, and no audio is recorded.
 
 ## Personal content
 
