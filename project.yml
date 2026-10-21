@@ -1,0 +1,89 @@
+name: Sori
+options:
+  bundleIdPrefix: com.lawrencekurniawan
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: true
+  xcodeVersion: "27.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CLANG_ENABLE_MODULES: YES
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
+    IPHONEOS_DEPLOYMENT_TARGET: "18.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    SUPPORTS_MACCATALYST: NO
+    SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    CODE_SIGN_STYLE: Automatic
+
+packages:
+  GRDB:
+    url: https://github.com/groue/GRDB.swift
+    exactVersion: 7.11.1
+
+targets:
+  Sori:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sori
+        excludes:
+          - "Info.plist"
+          - "**/.DS_Store"
+    dependencies:
+      - package: GRDB
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lawrencekurniawan.sori
+        PRODUCT_NAME: Sori
+        INFOPLIST_FILE: Sori/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: YES
+        DEVELOPMENT_ASSET_PATHS: ""
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+    scheme:
+      testTargets:
+        - SoriTests
+      gatherCoverageData: true
+
+  SoriTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: SoriTests
+    dependencies:
+      - target: Sori
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lawrencekurniawan.sori.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Sori.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Sori"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+schemes:
+  Sori:
+    build:
+      targets:
+        Sori: all
+        SoriTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - name: SoriTests
+          parallelizable: true

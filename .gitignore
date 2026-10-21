@@ -1,0 +1,37 @@
+# macOS
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Reference material and personal content (never commit)
+reference/
+LocalContent/
+*.pdf
+*.epub
+*.srt
+*.vtt
+*.ass
+*.mp3
+*.m4a
+*.zip
+
+# Local secrets
+Secrets.xcconfig
+*.xcsecrets
+
+# Generated project (project.yml is the source of truth)
+Sori.xcodeproj/
