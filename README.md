@@ -14,14 +14,14 @@ explicitly download a library pack or a subtitle file.
 
 ## Status
 
-Milestone 2 — Reading practice and session logging. Complete.
+Milestone 3 — Typing practice, Hangul composition, and the built-in 두벌식 keyboard. Complete.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
 | M0 | Scaffold, theme, settings, database, app shell | Complete |
 | M1 | Corpus, library, PDF/SRT import, 95% rule | Complete |
 | M2 | Reading practice | Complete |
-| M3 | Typing practice + 두벌식 keyboard | Planned |
+| M3 | Typing practice + 두벌식 keyboard | Complete |
 | M4 | Speak tab + TTS | Planned |
 | M5 | Vitamin Korean 1 curriculum + textbook audio | Planned |
 | M6 | Spaced repetition review | Planned |
@@ -115,6 +115,32 @@ non-whitespace characters in completed sentences ÷ (elapsed seconds ÷ 60)
 Punctuation counts as a character; spaces do not. The sentence currently on screen
 is not counted until you advance past it with Next. Completed sessions also record
 sentence exposure for the 95% library-coverage rule.
+
+## Typing practice
+
+Typing uses the same configured duration and library source as Reading. It selects up
+to 120 modern-Hangul sentences that can be produced by the built-in keyboard: Hangul
+syllables, spaces, digits, and the punctuation available on the keyboard’s symbol
+layer. Sentences with archaic jamo, Hanja, Latin letters, or unsupported punctuation
+are skipped for typing practice.
+
+The default keyboard is a built-in 두벌식 layout with a shift layer for double
+consonants and ㅒ/ㅖ, a symbol layer for digits and punctuation, space, and delete.
+The Settings tab can switch to the iOS system keyboard instead. In system-keyboard
+mode, the same target and live comparison are used, but composition is handled by iOS.
+
+Typed characters are compared with the target as you type. Correct characters turn
+green, mistakes turn red, and the comparison advances to the next sentence when the
+target is matched exactly. Net typing CPM is:
+
+```
+correct non-space characters ÷ (elapsed seconds ÷ 60)
+```
+
+Gross CPM and accuracy are stored as well. Spaces are excluded from both CPM values;
+errors never enter the net numerator. A manual End discards the session. When the
+timer completes, or when the last sentence is finished, Sori saves the session,
+records exposures up to the furthest sentence shown, and displays the result.
 
 ## Personal content
 

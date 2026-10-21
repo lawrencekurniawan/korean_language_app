@@ -44,6 +44,50 @@ struct PracticeRepository: Sendable {
         }
     }
 
+    @discardableResult
+    func saveTypingSession(
+        _ input: TypingSessionInput,
+        exposedSentenceIDs: [Int64]
+    ) async throws -> Int64 {
+        try await database.dbQueue.write { db in
+            try db.execute(
+                sql: """
+                    INSERT INTO practiceSession
+                        (skill, startedAt, endedAt, durationSeconds, plannedSeconds,
+                         chars, correctChars, inputChars, errors, sentences,
+                         cpmNet, cpmGross, accuracy, articleId, fontSize,
+                         keyboardMode, createdAt)
+                    VALUES
+                        ('typing', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)
+                    """,
+                arguments: [
+                    input.startedAt,
+                    input.endedAt,
+                    input.durationSeconds,
+                    input.plannedSeconds,
+                    input.typedCharacters,
+                    input.correctCharacters,
+                    input.typedCharacters,
+                    input.errorCharacters,
+                    input.completedSentences,
+                    input.cpmNet,
+                    input.cpmGross,
+                    input.accuracy,
+                    input.fontSize,
+                    input.keyboardMode,
+                    Date()
+                ]
+            )
+            let sessionID = db.lastInsertedRowID
+            try LibraryRepository.recordExposure(
+                sentenceIDs: exposedSentenceIDs,
+                surface: "typing",
+                in: db
+            )
+            return sessionID
+        }
+    }
+
     func recentSessions(limit: Int = 5) async throws -> [PracticeSessionRecord] {
         try await database.dbQueue.read { db in
             let rows = try Row.fetchAll(db, sql: """

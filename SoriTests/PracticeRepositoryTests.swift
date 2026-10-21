@@ -73,6 +73,73 @@ final class PracticeRepositoryTests: XCTestCase {
         XCTAssertEqual(exposureCount, 2)
     }
 
+    func testSaveTypingSessionWritesTypingFieldsAndExposures() async throws {
+        _ = try await importer.importDocument(
+            ImportedDocument(
+                title: "Typing text",
+                text: "안녕하세요. 오늘은 날씨가 좋습니다. 저는 한국어를 공부해요.",
+                source: "Unit test",
+                sourceURL: nil,
+                license: nil,
+                attribution: nil,
+                kind: .prose
+            )
+        )
+
+        let sentences = try await library.randomSentences(limit: 10)
+        let startedAt = Date(timeIntervalSince1970: 1_800_000_000)
+        let endedAt = startedAt.addingTimeInterval(60)
+
+        let sessionID = try await practice.saveTypingSession(
+            TypingSessionInput(
+                startedAt: startedAt,
+                endedAt: endedAt,
+                durationSeconds: 60,
+                plannedSeconds: 60,
+                typedCharacters: 12,
+                correctCharacters: 10,
+                errorCharacters: 2,
+                completedSentences: 1,
+                cpmNet: 10,
+                cpmGross: 12,
+                accuracy: 10.0 / 12.0,
+                fontSize: 24,
+                keyboardMode: "builtIn"
+            ),
+            exposedSentenceIDs: Array(sentences.prefix(2)).map(\.id)
+        )
+
+        XCTAssertGreaterThan(sessionID, 0)
+
+        let sessions = try await practice.recentSessions(limit: 5)
+        XCTAssertEqual(sessions.count, 1)
+        XCTAssertEqual(sessions[0].skill, "typing")
+        XCTAssertEqual(sessions[0].startedAt, startedAt)
+        XCTAssertEqual(sessions[0].endedAt, endedAt)
+        XCTAssertEqual(sessions[0].durationSeconds, 60, accuracy: 0.001)
+        XCTAssertEqual(sessions[0].plannedSeconds, 60)
+        XCTAssertEqual(sessions[0].characters, 12)
+        XCTAssertEqual(sessions[0].sentences, 1)
+        XCTAssertEqual(sessions[0].cpmNet, 10, accuracy: 0.001)
+        XCTAssertEqual(sessions[0].cpmGross, 12, accuracy: 0.001)
+        XCTAssertEqual(sessions[0].accuracy, 10.0 / 12.0, accuracy: 0.001)
+        XCTAssertEqual(sessions[0].fontSize, 24)
+
+        let storedMode = try await database.dbQueue.read { db in
+            try String.fetchOne(
+                db,
+                sql: "SELECT keyboardMode FROM practiceSession WHERE id = ?",
+                arguments: [sessionID]
+            )
+        }
+        XCTAssertEqual(storedMode, "builtIn")
+
+        let exposureCount = try await database.dbQueue.read { db in
+            try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM sentenceExposure") ?? 0
+        }
+        XCTAssertEqual(exposureCount, 2)
+    }
+
     func testRecentSessionsAreNewestFirstAndLimited() async throws {
         let base = Date(timeIntervalSince1970: 1_800_000_000)
         for index in 0..<3 {

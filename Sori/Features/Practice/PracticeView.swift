@@ -32,14 +32,7 @@ private enum PracticeMode: String, CaseIterable, Identifiable {
         case .reading:
             "Short sentences appear one at a time. Tap Next when you finish a sentence. Your characters per minute are logged at the end."
         case .typing:
-            "Type each sentence using the built-in 2-set keyboard. Mistakes turn red immediately. Your net characters per minute are logged at the end."
-        }
-    }
-
-    var milestone: String {
-        switch self {
-        case .reading: "Library sentences, one at a time"
-        case .typing: "Typing arrives in M3"
+            "Type each sentence exactly. Mistakes turn red immediately. Your net characters per minute are logged at the end."
         }
     }
 }
@@ -48,12 +41,16 @@ struct PracticeView: View {
     @Environment(AppEnvironment.self) private var env
     @State private var mode: PracticeMode = .reading
     @State private var readingSentences: [PracticeSentence] = []
+    @State private var typingSentences: [PracticeSentence] = []
     @State private var showingReadingSession = false
+    @State private var showingTypingSession = false
     @State private var isPreparingReading = false
+    @State private var isPreparingTyping = false
     @State private var sessions: [PracticeSessionRecord] = []
     @State private var alertMessage: String?
     #if DEBUG
     @State private var didAttemptDebugStart = false
+    @State private var didAttemptDebugTypingStart = false
     #endif
 
     private var librarySentenceCount: Int {
@@ -64,13 +61,35 @@ struct PracticeView: View {
         librarySentenceCount > 0
     }
 
-    private var sessionDuration: Int {
+    private var readingSessionDuration: Int {
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--reading-15") {
             return 15
         }
         #endif
         return env.settings.readingDuration
+    }
+
+    private var typingSessionDuration: Int {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--typing-15") {
+            return 15
+        }
+        #endif
+        return env.settings.typingDuration
+    }
+
+    private var effectiveKeyboardMode: KeyboardMode {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--system-keyboard") {
+            return .system
+        }
+        #endif
+        return env.settings.keyboardMode
+    }
+
+    private var isPreparing: Bool {
+        isPreparingReading || isPreparingTyping
     }
 
     var body: some View {
@@ -85,6 +104,7 @@ struct PracticeView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .disabled(isPreparing)
 
                     practiceCard(mode: mode, settings: settings)
                     howItWorks
@@ -106,7 +126,13 @@ struct PracticeView: View {
         .task {
             await loadRecentSessions()
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--reading"), !didAttemptDebugStart {
+            if ProcessInfo.processInfo.arguments.contains("--typing-setup") {
+                mode = .typing
+            } else if ProcessInfo.processInfo.arguments.contains("--typing"), !didAttemptDebugTypingStart {
+                didAttemptDebugTypingStart = true
+                mode = .typing
+                await startTyping()
+            } else if ProcessInfo.processInfo.arguments.contains("--reading"), !didAttemptDebugStart {
                 didAttemptDebugStart = true
                 await startReading()
             }
@@ -123,8 +149,24 @@ struct PracticeView: View {
         ) {
             ReadingSessionView(
                 sentences: readingSentences,
-                plannedDuration: sessionDuration,
+                plannedDuration: readingSessionDuration,
                 fontSize: env.settings.readingFontSize
+            )
+        }
+        .fullScreenCover(
+            isPresented: $showingTypingSession,
+            onDismiss: {
+                Task {
+                    await loadRecentSessions()
+                    await env.refreshLibrary()
+                }
+            }
+        ) {
+            TypingSessionView(
+                sentences: typingSentences,
+                plannedDuration: typingSessionDuration,
+                fontSize: env.settings.typingFontSize,
+                keyboardMode: effectiveKeyboardMode
             )
         }
         .alert(
@@ -172,16 +214,20 @@ struct PracticeView: View {
                     detailChip(symbol: "timer", text: "\(duration) s")
                     detailChip(symbol: "books.vertical", text: "Library")
                     if mode == .typing {
-                        detailChip(symbol: "keyboard", text: settings.keyboardMode.title)
+                        detailChip(
+                            symbol: "keyboard",
+                            text: effectiveKeyboardMode == .builtIn ? "2-set" : "System"
+                        )
                     } else {
                         detailChip(symbol: "textformat.size", text: "\(Int(settings.readingFontSize)) pt")
                     }
                 }
 
                 Button {
-                    Task { await startReading() }
+                    let requestedMode = mode
+                    Task { await startSession(requestedMode) }
                 } label: {
-                    if isPreparingReading {
+                    if isPreparing {
                         HStack(spacing: SoriSpacing.xs) {
                             ProgressView()
                                 .tint(Color.soriBackground)
@@ -192,8 +238,8 @@ struct PracticeView: View {
                     }
                 }
                 .buttonStyle(SoriPrimaryButtonStyle())
-                .disabled(!isReading || isPreparingReading || !hasLibraryContent)
-                .opacity(isReading && hasLibraryContent ? 1 : 0.55)
+                .disabled(isPreparing || !hasLibraryContent)
+                .opacity(hasLibraryContent ? 1 : 0.55)
 
                 if isReading {
                     Text(
@@ -204,7 +250,7 @@ struct PracticeView: View {
                     .font(SoriFont.caption)
                     .foregroundStyle(Color.soriSecondary)
                 } else {
-                    Text(mode.milestone)
+                    Text("Modern Hangul sentences · \(effectiveKeyboardMode.title)")
                         .font(SoriFont.caption)
                         .foregroundStyle(Color.soriSecondary)
                 }
@@ -222,7 +268,8 @@ struct PracticeView: View {
                 bullet("The timer starts only when you tap Start.")
                 bullet("The session runs for the configured duration.")
                 bullet("Manual End discards the result; a completed timer saves it.")
-                bullet("Saved sessions use characters per minute, excluding spaces.")
+                bullet("Reading counts completed sentences; typing counts correct characters.")
+                bullet("CPM excludes spaces. Typing errors stay red until corrected.")
             }
         }
     }
@@ -286,19 +333,50 @@ struct PracticeView: View {
         sessions = (try? await env.practice.recentSessions(limit: 5)) ?? []
     }
 
+    private func startSession(_ requestedMode: PracticeMode) async {
+        switch requestedMode {
+        case .reading:
+            await startReading()
+        case .typing:
+            await startTyping()
+        }
+    }
+
     private func startReading() async {
         guard mode == .reading, !isPreparingReading, !showingReadingSession else { return }
         isPreparingReading = true
         defer { isPreparingReading = false }
 
         do {
-            let sentences = try await env.library.randomSentences(limit: 120)
-            guard !sentences.isEmpty else {
-                alertMessage = "The library does not have any sentences yet. Add Korean text in Library first."
+            let candidates = try await env.library.randomSentences(limit: 400)
+            let presentable = candidates.filter { PracticeText.isPresentable($0.text) }
+            guard !presentable.isEmpty else {
+                alertMessage = "The library does not have any complete sentences yet. Add Korean text in Library first."
                 return
             }
-            readingSentences = sentences
+            readingSentences = Array(presentable.prefix(120))
             showingReadingSession = true
+        } catch {
+            alertMessage = "Could not prepare sentences. \(error.localizedDescription)"
+        }
+    }
+
+    private func startTyping() async {
+        guard mode == .typing, !isPreparingTyping, !showingTypingSession else { return }
+        isPreparingTyping = true
+        defer { isPreparingTyping = false }
+
+        do {
+            let candidates = try await env.library.randomSentences(limit: 500)
+            let typeable = candidates.filter {
+                $0.text.count <= 160 && TypingText.isTypeable($0.text)
+            }
+            guard !typeable.isEmpty else {
+                alertMessage = "No typeable Korean sentences were found. Try importing a modern Korean text."
+                return
+            }
+            typingSentences = Array(typeable.prefix(120))
+            showingTypingSession = true
         } catch {
             alertMessage = "Could not prepare sentences. \(error.localizedDescription)"
         }
