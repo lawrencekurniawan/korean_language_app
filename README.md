@@ -154,10 +154,12 @@ phrase with the saved repeat setting: 1–5 times, or loop until you press Stop.
 Voice, speed, repeat, and the Speak font size persist across launches.
 
 Speech is synthesised on-device by Apple's `AVSpeechSynthesizer` behind a small
-`SpeechEngine` protocol, so a neural engine can replace it later. Sori prefers a
-Korean Yuna voice, then the highest-quality Korean voice installed on the device.
-The Settings sheet lists every Korean voice, including Enhanced and Premium
-voices once they are downloaded in iOS Settings.
+`SpeechEngine` protocol, so a neural engine can replace it later. Automatic voice
+selection uses the highest-quality Korean voice installed on the iPhone, with
+Yuna preferred on ties — so a downloaded Yuna Enhanced or Premium voice is used
+as soon as iOS exposes it. The voice sheet lists every Korean voice and says when
+only the Standard voice is present; enhanced voices are installed in iOS
+Settings → Accessibility → Spoken Content → Voices → Korean.
 
 Speak never writes practice sessions, exposure records, or analytics. Nothing is
 uploaded, and no audio is recorded.

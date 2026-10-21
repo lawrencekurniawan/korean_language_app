@@ -15,20 +15,8 @@ final class AppleSpeechEngine: NSObject, SpeechEngine, AVSpeechSynthesizerDelega
 
     var voices: [SpeechVoice] {
         Self.koreanVoices
-            .map { voice in
-                SpeechVoice(
-                    id: voice.identifier,
-                    name: voice.name,
-                    language: voice.language,
-                    quality: Self.quality(for: voice)
-                )
-            }
-            .sorted { lhs, rhs in
-                if lhs.quality != rhs.quality {
-                    return lhs.quality > rhs.quality
-                }
-                return lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
-            }
+            .map(Self.speechVoice(for:))
+            .sorted(by: SpeechVoice.isOrderedBefore)
     }
 
     func speak(
@@ -92,30 +80,6 @@ final class AppleSpeechEngine: NSObject, SpeechEngine, AVSpeechSynthesizerDelega
         }
     }
 
-    private func resolvedVoice(identifier: String?) -> AVSpeechSynthesisVoice? {
-        let voices = Self.koreanVoices
-
-        if let identifier, !identifier.isEmpty,
-           let match = voices.first(where: { $0.identifier == identifier }) {
-            return match
-        }
-
-        let yuna = voices.filter {
-            $0.name.localizedCaseInsensitiveContains("Yuna")
-                || $0.identifier.localizedCaseInsensitiveContains("Yuna")
-        }
-        if let best = bestVoice(in: yuna) {
-            return best
-        }
-        return bestVoice(in: voices) ?? AVSpeechSynthesisVoice(language: "ko-KR")
-    }
-
-    private func bestVoice(in voices: [AVSpeechSynthesisVoice]) -> AVSpeechSynthesisVoice? {
-        voices.max { lhs, rhs in
-            Self.qualityRank(for: lhs) < Self.qualityRank(for: rhs)
-        }
-    }
-
     private func activateAudioSession() {
         let session = AVAudioSession.sharedInstance()
         do {
@@ -136,6 +100,31 @@ final class AppleSpeechEngine: NSObject, SpeechEngine, AVSpeechSynthesizerDelega
         )
     }
 
+    private func resolvedVoice(identifier: String?) -> AVSpeechSynthesisVoice? {
+        let voices = Self.koreanVoices
+
+        if let identifier, !identifier.isEmpty,
+           let match = voices.first(where: { $0.identifier == identifier }) {
+            return match
+        }
+
+        let ranked = voices.map(Self.speechVoice(for:))
+        guard let best = SpeechVoice.best(in: ranked),
+              let match = voices.first(where: { $0.identifier == best.id }) else {
+            return AVSpeechSynthesisVoice(language: "ko-KR")
+        }
+        return match
+    }
+
+    private static func speechVoice(for voice: AVSpeechSynthesisVoice) -> SpeechVoice {
+        SpeechVoice(
+            id: voice.identifier,
+            name: voice.name,
+            language: voice.language,
+            quality: quality(for: voice)
+        )
+    }
+
     private static var koreanVoices: [AVSpeechSynthesisVoice] {
         AVSpeechSynthesisVoice.speechVoices().filter { $0.language.hasPrefix("ko") }
     }
@@ -145,14 +134,6 @@ final class AppleSpeechEngine: NSObject, SpeechEngine, AVSpeechSynthesizerDelega
         case .premium: .premium
         case .enhanced: .enhanced
         default: .standard
-        }
-    }
-
-    private static func qualityRank(for voice: AVSpeechSynthesisVoice) -> Int {
-        switch voice.quality {
-        case .premium: 2
-        case .enhanced: 1
-        default: 0
         }
     }
 }

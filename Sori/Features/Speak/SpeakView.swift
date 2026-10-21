@@ -440,7 +440,7 @@ private struct VoiceSettingsSheet: View {
             Form {
                 Section {
                     Picker("Voice", selection: $settings.voiceIdentifier) {
-                        Text("Automatic (prefer Yuna Enhanced)").tag("")
+                        Text("Automatic (best installed)").tag("")
                         if let unavailableVoiceIdentifier {
                             Text("Unavailable voice").tag(unavailableVoiceIdentifier)
                         }
@@ -461,7 +461,16 @@ private struct VoiceSettingsSheet: View {
                 } header: {
                     Text("Voice")
                 } footer: {
-                    Text("Sori prefers Apple's Yuna Enhanced voice. Install it in iOS Settings → Accessibility → Spoken Content → Voices → Korean, then choose Yuna. Standard and enhanced voices both work offline.")
+                    VStack(alignment: .leading, spacing: SoriSpacing.xs) {
+                        if settings.voiceIdentifier.isEmpty,
+                           let best = player.bestVoice,
+                           best.quality == .standard {
+                            Text("Yuna Enhanced is not installed, so Sori is using \(best.displayName). Download Yuna (Enhanced) or a Premium Korean voice in iOS Settings → Accessibility → Spoken Content → Voices → Korean.")
+                        } else {
+                            Text("Automatic picks the highest-quality Korean voice installed, preferring Yuna on ties.")
+                        }
+                        Text("All voices work offline. Nothing is uploaded or logged.")
+                    }
                 }
 
                 Section("Speed") {

@@ -140,7 +140,42 @@ final class SpeakPlayerTests: XCTestCase {
         XCTAssertNotNil(player.errorMessage)
     }
 
-    func testResolvedVoicePrefersYunaAndFallsBack() {
+    func testResolvedVoicePrefersQualityOverYuna() {
+        let engine = MockSpeechEngine()
+        engine.voices = [
+            SpeechVoice(id: "yuna", name: "Yuna", language: "ko-KR", quality: .standard),
+            SpeechVoice(id: "other", name: "Minsu", language: "ko-KR", quality: .enhanced)
+        ]
+        let player = SpeakPlayer(engine: engine)
+
+        XCTAssertEqual(player.resolvedVoice(for: nil)?.id, "other")
+        XCTAssertEqual(player.bestVoice?.id, "other")
+        XCTAssertTrue(player.hasEnhancedVoice)
+    }
+
+    func testResolvedVoicePrefersYunaOnQualityTie() {
+        let engine = MockSpeechEngine()
+        engine.voices = [
+            SpeechVoice(id: "other", name: "Minsu", language: "ko-KR", quality: .enhanced),
+            SpeechVoice(id: "yuna", name: "Yuna", language: "ko-KR", quality: .enhanced)
+        ]
+        let player = SpeakPlayer(engine: engine)
+
+        XCTAssertEqual(player.resolvedVoice(for: nil)?.id, "yuna")
+    }
+
+    func testResolvedVoicePrefersPremiumOverEnhanced() {
+        let engine = MockSpeechEngine()
+        engine.voices = [
+            SpeechVoice(id: "yuna", name: "Yuna", language: "ko-KR", quality: .enhanced),
+            SpeechVoice(id: "premium", name: "Minsu", language: "ko-KR", quality: .premium)
+        ]
+        let player = SpeakPlayer(engine: engine)
+
+        XCTAssertEqual(player.resolvedVoice(for: nil)?.id, "premium")
+    }
+
+    func testResolvedVoiceHonoursExplicitChoiceAndFallsBack() {
         let engine = MockSpeechEngine()
         engine.voices = [
             SpeechVoice(id: "other", name: "Minsu", language: "ko-KR", quality: .enhanced),
@@ -148,9 +183,8 @@ final class SpeakPlayerTests: XCTestCase {
         ]
         let player = SpeakPlayer(engine: engine)
 
-        XCTAssertEqual(player.resolvedVoice(for: nil)?.id, "yuna")
-        XCTAssertEqual(player.resolvedVoice(for: "other")?.id, "other")
-        XCTAssertEqual(player.resolvedVoice(for: "missing")?.id, "yuna")
+        XCTAssertEqual(player.resolvedVoice(for: "yuna")?.id, "yuna")
+        XCTAssertEqual(player.resolvedVoice(for: "missing")?.id, "other")
     }
 }
 

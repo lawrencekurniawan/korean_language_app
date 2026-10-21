@@ -29,7 +29,15 @@ final class SpeakPlayer {
            let match = voices.first(where: { $0.id == identifier }) {
             return match
         }
-        return voices.first(where: \.isYuna) ?? voices.first
+        return SpeechVoice.best(in: voices)
+    }
+
+    var bestVoice: SpeechVoice? {
+        SpeechVoice.best(in: voices)
+    }
+
+    var hasEnhancedVoice: Bool {
+        voices.contains { $0.quality >= .enhanced }
     }
 
     func play(
