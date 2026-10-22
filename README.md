@@ -14,7 +14,7 @@ explicitly download a library pack or a subtitle file.
 
 ## Status
 
-Milestone 5 — Vitamin Korean 1 curriculum with personal textbook audio. Complete.
+Milestone 6 — FSRS spaced repetition for grammar and vocabulary. Complete.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
@@ -24,7 +24,7 @@ Milestone 5 — Vitamin Korean 1 curriculum with personal textbook audio. Comple
 | M3 | Typing practice + 두벌식 keyboard | Complete |
 | M4 | Speak tab + TTS | Complete |
 | M5 | Vitamin Korean 1 curriculum + textbook audio | Complete |
-| M6 | Spaced repetition review | Planned |
+| M6 | FSRS review for grammar and vocabulary | Complete |
 | M7 | Progress charts, session management, time tracking | Planned |
 | M8 | SideStore IPA, backup/restore, polish | Planned |
 
@@ -178,10 +178,27 @@ explanations, examples, dialogues, and practice items are original study materia
 written for Sori; textbook pages are not included. The curriculum is authored content
 under CC BY-NC-SA 4.0, and its version is shown in Settings.
 
-The Learn tab shows a Continue card for the next unfinished lesson, chapter progress,
-a collapsible TOPIK 1–6 roadmap, and the chapter list. Opening a lesson marks it in
-progress; **Mark lesson complete** records it locally in SQLite. Completing lessons
-will feed grammar and vocabulary cards into the spaced-repetition milestone.
+The Learn tab shows a Continue card for the next unfinished lesson, the review queue,
+chapter progress, a collapsible TOPIK 1–6 roadmap, and the chapter list. Opening a
+lesson marks it in progress; **Mark lesson complete** records it locally in SQLite and
+creates review cards.
+
+### Spaced repetition
+
+Completing a lesson creates nine review cards: one for each of its three grammar
+points and one for each of its six vocabulary items. The Learn tab shows how many
+cards are due and opens Review. Grammar cards show the point title and pattern on the
+front; vocabulary cards show the Korean word. Both reveal the explanation or English
+gloss plus an example where one is available.
+
+Sori uses an FSRS-5 scheduler with the published default weights and 90% desired
+retention. New cards use 1, 5, and 10 minute learning steps. **Again** returns a card
+to learning or relearning, while **Hard**, **Good**, and **Easy** update FSRS stability
+and difficulty and schedule the next interval. Cards are keyed by stable IDs and keep
+their scheduling when the curriculum is reloaded. If lesson progress is reset, that
+lesson's cards are removed. Ratings and review times stay in local SQLite; no account
+or upload is involved. Review history is stored for future scheduling optimisation,
+but the default weights are not personalised yet.
 
 ### Personal textbook audio
 

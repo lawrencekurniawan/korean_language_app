@@ -332,6 +332,16 @@ final class AppDatabase: Sendable {
             )
         }
 
+        migrator.registerMigration("v2") { db in
+            try db.alter(table: "card") { t in
+                t.add(column: "step", .integer).notNull().defaults(to: 0)
+            }
+            try db.execute(
+                sql: "UPDATE appMeta SET value = ? WHERE key = ?",
+                arguments: ["2", "schemaVersion"]
+            )
+        }
+
         return migrator
     }()
 }

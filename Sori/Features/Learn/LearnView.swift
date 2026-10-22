@@ -4,6 +4,7 @@ enum LearnRoute: Hashable {
     case chapter(CurriculumChapter)
     case lesson(CurriculumLesson)
     case audio
+    case review
 }
 
 struct LearnView: View {
@@ -26,8 +27,8 @@ struct LearnView: View {
                         coveragePrompt(summary)
                     }
 
-                    curriculumCard
                     reviewCard
+                    curriculumCard
                     roadmapCard
                     footnote
                 }
@@ -44,10 +45,13 @@ struct LearnView: View {
                     LessonDetailView(lesson: lesson)
                 case .audio:
                     PersonalAudioView()
+                case .review:
+                    ReviewView()
                 }
             }
             .task {
                 await env.prepareCurriculum()
+                await env.prepareReview()
                 if env.librarySummary == nil {
                     await env.refreshLibrary()
                 }
@@ -171,30 +175,51 @@ struct LearnView: View {
     }
 
     private var reviewCard: some View {
-        SoriCard {
-            HStack(spacing: SoriSpacing.md) {
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(Color.soriAccent)
-                    .frame(width: 42, height: 42)
-                    .background(Color.soriAccent.opacity(0.12), in: Circle())
+        NavigationLink(value: LearnRoute.review) {
+            SoriCard {
+                HStack(spacing: SoriSpacing.md) {
+                    Image(systemName: "rectangle.stack")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundStyle(Color.soriAccent)
+                        .frame(width: 42, height: 42)
+                        .background(Color.soriAccent.opacity(0.12), in: Circle())
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Reviews due")
-                        .font(SoriFont.headline)
-                        .foregroundStyle(Color.soriInk)
-                    Text("Spaced repetition arrives in M6")
-                        .font(SoriFont.caption)
-                        .foregroundStyle(Color.soriSecondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Reviews due")
+                            .font(SoriFont.headline)
+                            .foregroundStyle(Color.soriInk)
+                        Text(reviewSubtitle)
+                            .font(SoriFont.caption)
+                            .foregroundStyle(Color.soriSecondary)
+                    }
+
+                    Spacer()
+
+                    Text("\(env.review.dueCount)")
+                        .font(SoriFont.stat)
+                        .foregroundStyle(
+                            env.review.dueCount > 0
+                                ? Color.soriAccent
+                                : Color.soriTertiary
+                        )
                 }
-
-                Spacer()
-
-                Text("0")
-                    .font(SoriFont.stat)
-                    .foregroundStyle(Color.soriTertiary)
             }
         }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("learn-review")
+    }
+
+    private var reviewSubtitle: String {
+        if env.review.dueCount > 0 {
+            return "Grammar and vocabulary · FSRS"
+        }
+        if env.review.cards.isEmpty {
+            return "Complete a lesson to add cards"
+        }
+        if let next = env.review.nextDueAt {
+            return "Next \(next.formatted(.relative(presentation: .named)))"
+        }
+        return "Nothing due"
     }
 
     private func coveragePrompt(_ summary: LibrarySummary) -> some View {
@@ -305,7 +330,9 @@ struct LearnView: View {
         guard path.isEmpty else { return }
         let arguments = ProcessInfo.processInfo.arguments
 
-        if arguments.contains("--learn-audio") {
+        if arguments.contains("--learn-review") {
+            path.append(.review)
+        } else if arguments.contains("--learn-audio") {
             path.append(.audio)
         } else if arguments.contains("--learn-lesson"),
                   let lesson = env.curriculum.curriculum.lessons.first {

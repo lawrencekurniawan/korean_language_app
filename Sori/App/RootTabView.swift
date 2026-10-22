@@ -60,6 +60,7 @@ struct RootTabView: View {
             }
             .task {
                 await env.prepareCurriculum()
+                await env.prepareReview()
             }
             .task {
                 await splash.handleBecameActive(
@@ -74,6 +75,7 @@ struct RootTabView: View {
                         settings: env.settings,
                         database: env.database
                     )
+                    await env.prepareReview()
                 }
             }
     }

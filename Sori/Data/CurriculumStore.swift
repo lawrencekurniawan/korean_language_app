@@ -89,6 +89,10 @@ final class CurriculumStore {
         curriculum.lessons.filter { isCompleted($0.id) }.count
     }
 
+    var completedLessonIDs: Set<String> {
+        Set(progress.values.filter { $0.status == .completed }.map(\.lessonID))
+    }
+
     var nextLesson: CurriculumLesson? {
         curriculum.lessons.first { !isCompleted($0.id) }
     }

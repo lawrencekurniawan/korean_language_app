@@ -364,7 +364,7 @@ struct LessonDetailView: View {
                         .font(SoriFont.headline)
                         .foregroundStyle(Color.soriCorrect)
 
-                    Text("Review cards for this lesson's grammar and vocabulary will appear when the review milestone lands.")
+                    Text("Grammar and vocabulary from this lesson are in your FSRS review queue.")
                         .font(SoriFont.caption)
                         .foregroundStyle(Color.soriSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -394,7 +394,7 @@ struct LessonDetailView: View {
                     }
                 } else {
                     Button {
-                        Task { await env.curriculum.complete(lesson.id) }
+                        Task { await env.completeLesson(lesson.id) }
                     } label: {
                         Label("Mark lesson complete", systemImage: "checkmark.circle.fill")
                     }

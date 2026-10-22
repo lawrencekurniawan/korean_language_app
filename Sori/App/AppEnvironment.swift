@@ -11,6 +11,7 @@ final class AppEnvironment {
     let practice: PracticeRepository
     let curriculum: CurriculumStore
     let personalAudio: PersonalAudioStore
+    let review: ReviewStore
     let startupError: String?
 
     var libraryStatus: LibraryStatus = .unknown
@@ -27,6 +28,7 @@ final class AppEnvironment {
         self.practice = PracticeRepository(database: database)
         self.curriculum = CurriculumStore(database: database)
         self.personalAudio = PersonalAudioStore()
+        self.review = ReviewStore(database: database)
     }
 
     var isSeedingLibrary: Bool {
@@ -76,6 +78,18 @@ final class AppEnvironment {
 
     func prepareCurriculum() async {
         await curriculum.refresh()
+    }
+
+    func prepareReview() async {
+        await review.sync(
+            curriculum: curriculum.curriculum,
+            completedLessonIDs: curriculum.completedLessonIDs
+        )
+    }
+
+    func completeLesson(_ lessonID: String) async {
+        await curriculum.complete(lessonID)
+        await prepareReview()
     }
 
     static func live() -> AppEnvironment {
