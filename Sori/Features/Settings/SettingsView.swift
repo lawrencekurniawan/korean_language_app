@@ -105,6 +105,11 @@ struct SettingsView: View {
                     } label: {
                         LabeledContent("Subtitle sources", value: sourcesValue)
                     }
+                    NavigationLink {
+                        PersonalAudioView()
+                    } label: {
+                        LabeledContent("Personal audio", value: personalAudioValue)
+                    }
                     LabeledContent("Backup", value: "Not configured")
                     LabeledContent(
                         "Last backup",
@@ -117,8 +122,11 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    LabeledContent("Version", value: "0.1.0")
-                    LabeledContent("Curriculum", value: "0.1.0")
+                    LabeledContent("Version", value: appVersion)
+                    LabeledContent(
+                        "Curriculum",
+                        value: env.curriculum.curriculum.curriculumVersion
+                    )
                     Button("Sources & licences") {
                         showingLicences = true
                     }
@@ -187,6 +195,16 @@ struct SettingsView: View {
     private var sourcesValue: String {
         let hasKey = !(SecretStore.shared.value(for: .openSubtitlesAPIKey) ?? "").isEmpty
         return hasKey ? "Configured" : "Not configured"
+    }
+
+    private var personalAudioValue: String {
+        let count = env.personalAudio.tracks.count
+        guard count > 0 else { return "None" }
+        return "\(count) track\(count == 1 ? "" : "s")"
+    }
+
+    private var appVersion: String {
+        (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "0.2.0"
     }
 }
 

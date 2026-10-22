@@ -1,7 +1,7 @@
 {
-  "curriculumVersion": "0.1.0",
-  "generatedAt": "2026-10-21",
+  "curriculumVersion": "1.0.0",
   "spine": "Vitamin Korean 1",
   "reference": "Korean Grammar in Use: Beginning",
-  "lessons": []
+  "file": "vitamin-korean-1.json",
+  "lessonCount": 15
 }

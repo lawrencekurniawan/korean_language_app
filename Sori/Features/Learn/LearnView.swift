@@ -1,20 +1,33 @@
 import SwiftUI
 
+enum LearnRoute: Hashable {
+    case chapter(CurriculumChapter)
+    case lesson(CurriculumLesson)
+    case audio
+}
+
 struct LearnView: View {
     @Environment(AppEnvironment.self) private var env
 
     @AppStorage("learn.roadmapExpanded") private var roadmapExpanded = false
-    @State private var showingLessonPreview = false
+    @State private var path: [LearnRoute] = []
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: SoriSpacing.lg) {
+                    if let error = env.curriculum.loadError {
+                        errorCard(error)
+                    }
+
                     continueCard
-                    reviewCard
+
                     if let summary = env.librarySummary, summary.needsMoreContent {
                         coveragePrompt(summary)
                     }
+
+                    curriculumCard
+                    reviewCard
                     roadmapCard
                     footnote
                 }
@@ -23,13 +36,163 @@ struct LearnView: View {
             }
             .soriScreenBackground()
             .navigationTitle("Learn")
-            .sheet(isPresented: $showingLessonPreview) {
-                LessonPreviewSheet()
+            .navigationDestination(for: LearnRoute.self) { route in
+                switch route {
+                case .chapter(let chapter):
+                    ChapterDetailView(chapter: chapter)
+                case .lesson(let lesson):
+                    LessonDetailView(lesson: lesson)
+                case .audio:
+                    PersonalAudioView()
+                }
             }
             .task {
+                await env.prepareCurriculum()
                 if env.librarySummary == nil {
                     await env.refreshLibrary()
                 }
+
+                #if DEBUG
+                openDebugDestinationIfNeeded()
+                #endif
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var continueCard: some View {
+        if let lesson = env.curriculum.nextLesson ?? env.curriculum.lastLesson {
+            let chapter = env.curriculum.curriculum.chapter(for: lesson)
+            let isReview = env.curriculum.isCompleted(lesson.id)
+
+            NavigationLink(value: LearnRoute.lesson(lesson)) {
+                SoriCard {
+                    VStack(alignment: .leading, spacing: SoriSpacing.md) {
+                        HStack {
+                            SoriBadge(text: "TOPIK \(lesson.topik)")
+                            Spacer()
+                            Text("\(lesson.minutes) min")
+                                .font(SoriFont.caption)
+                                .foregroundStyle(Color.soriSecondary)
+                        }
+
+                        VStack(alignment: .leading, spacing: SoriSpacing.xxs) {
+                            Text(lesson.title)
+                                .font(SoriFont.title)
+                                .foregroundStyle(Color.soriInk)
+                            Text(continueSubtitle(chapter: chapter, lesson: lesson))
+                                .font(SoriFont.callout)
+                                .foregroundStyle(Color.soriSecondary)
+                        }
+
+                        Text(lesson.summary)
+                            .font(SoriFont.body)
+                            .foregroundStyle(Color.soriInk)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        HStack(spacing: SoriSpacing.sm) {
+                            Text(isReview ? "Review lesson" : "Continue lesson")
+                                .font(SoriFont.headline)
+                                .foregroundStyle(Color.soriBackground)
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.soriBackground)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(Color.soriAccent)
+                        )
+
+                        progressLine
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+        } else {
+            SoriCard {
+                SoriEmptyState(
+                    symbol: "book.closed",
+                    title: "Curriculum unavailable",
+                    message: "Reinstall Sori or regenerate the project to restore the bundled lessons."
+                )
+            }
+        }
+    }
+
+    private var progressLine: some View {
+        let total = env.curriculum.curriculum.totalLessonCount
+        let completed = env.curriculum.completedLessonCount
+        let fraction = total > 0 ? Double(completed) / Double(total) : 0
+
+        return VStack(alignment: .leading, spacing: 6) {
+            ProgressView(value: fraction)
+                .tint(.soriAccent)
+            Text("\(completed) of \(total) lessons complete")
+                .font(SoriFont.caption)
+                .foregroundStyle(Color.soriSecondary)
+        }
+    }
+
+    private func continueSubtitle(
+        chapter: CurriculumChapter?,
+        lesson: CurriculumLesson
+    ) -> String {
+        let chapterTitle = chapter.map { "Chapter \($0.number) · \($0.englishTitle)" }
+            ?? "Vitamin Korean 1"
+        return "\(chapterTitle) · Lesson \(lesson.id)"
+    }
+
+    private var curriculumCard: some View {
+        SoriCard(padding: SoriSpacing.md) {
+            VStack(spacing: 0) {
+                SoriSectionHeader(
+                    "Curriculum",
+                    subtitle: "Vitamin Korean 1 · 5 chapters"
+                )
+                .padding(.bottom, SoriSpacing.sm)
+
+                ForEach(env.curriculum.curriculum.chapters) { chapter in
+                    if chapter.id != env.curriculum.curriculum.chapters.first?.id {
+                        Divider().overlay(Color.soriBorder)
+                    }
+
+                    NavigationLink(value: LearnRoute.chapter(chapter)) {
+                        ChapterRow(
+                            chapter: chapter,
+                            completed: env.curriculum.completedCount(in: chapter)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    private var reviewCard: some View {
+        SoriCard {
+            HStack(spacing: SoriSpacing.md) {
+                Image(systemName: "arrow.triangle.2.circlepath")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(Color.soriAccent)
+                    .frame(width: 42, height: 42)
+                    .background(Color.soriAccent.opacity(0.12), in: Circle())
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Reviews due")
+                        .font(SoriFont.headline)
+                        .foregroundStyle(Color.soriInk)
+                    Text("Spaced repetition arrives in M6")
+                        .font(SoriFont.caption)
+                        .foregroundStyle(Color.soriSecondary)
+                }
+
+                Spacer()
+
+                Text("0")
+                    .font(SoriFont.stat)
+                    .foregroundStyle(Color.soriTertiary)
             }
         }
     }
@@ -67,66 +230,6 @@ struct LearnView: View {
         .buttonStyle(.plain)
     }
 
-    private var continueCard: some View {
-        SoriCard {
-            VStack(alignment: .leading, spacing: SoriSpacing.md) {
-                HStack {
-                    SoriBadge(text: "TOPIK 1")
-                    Spacer()
-                    Text("4 min")
-                        .font(SoriFont.caption)
-                        .foregroundStyle(Color.soriSecondary)
-                }
-
-                VStack(alignment: .leading, spacing: SoriSpacing.xxs) {
-                    Text("Hangul, step by step")
-                        .font(SoriFont.title)
-                        .foregroundStyle(Color.soriInk)
-                    Text("Vitamin Korean 1 · Unit 1, Lesson 1")
-                        .font(SoriFont.callout)
-                        .foregroundStyle(Color.soriSecondary)
-                }
-
-                Text("Learn the basic vowels, consonants, and the shape of a Korean syllable.")
-                    .font(SoriFont.body)
-                    .foregroundStyle(Color.soriInk)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Button("Preview lesson") {
-                    showingLessonPreview = true
-                }
-                .buttonStyle(SoriPrimaryButtonStyle())
-            }
-        }
-    }
-
-    private var reviewCard: some View {
-        SoriCard {
-            HStack(spacing: SoriSpacing.md) {
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(Color.soriAccent)
-                    .frame(width: 42, height: 42)
-                    .background(Color.soriAccent.opacity(0.12), in: Circle())
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Reviews due")
-                        .font(SoriFont.headline)
-                        .foregroundStyle(Color.soriInk)
-                    Text("Spaced repetition arrives in M6")
-                        .font(SoriFont.caption)
-                        .foregroundStyle(Color.soriSecondary)
-                }
-
-                Spacer()
-
-                Text("0")
-                    .font(SoriFont.stat)
-                    .foregroundStyle(Color.soriTertiary)
-            }
-        }
-    }
-
     private var roadmapCard: some View {
         SoriCard(padding: SoriSpacing.md) {
             VStack(spacing: 0) {
@@ -157,7 +260,10 @@ struct LearnView: View {
                 if roadmapExpanded {
                     VStack(spacing: SoriSpacing.xs) {
                         ForEach(RoadmapLevel.all) { level in
-                            RoadmapLevelRow(level: level)
+                            RoadmapLevelRow(
+                                level: level,
+                                progress: level.id == 1 ? topikOneProgress : nil
+                            )
                         }
                     }
                     .padding(.top, SoriSpacing.md)
@@ -167,12 +273,103 @@ struct LearnView: View {
         }
     }
 
+    private var topikOneProgress: Double {
+        let total = env.curriculum.curriculum.totalLessonCount
+        guard total > 0 else { return 0 }
+        return Double(env.curriculum.completedLessonCount) / Double(total)
+    }
+
     private var footnote: some View {
-        Text("Levels 2–6 are coming in later content updates. The curriculum is bundled and versioned, so every install gets the same lessons.")
+        Text("Lessons are bundled and versioned, so every install gets the same curriculum. Personal textbook audio stays on this iPhone.")
             .font(SoriFont.caption)
             .foregroundStyle(Color.soriSecondary)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, SoriSpacing.xs)
+    }
+
+    private func errorCard(_ message: String) -> some View {
+        SoriCard {
+            Label {
+                Text(message)
+                    .font(SoriFont.caption)
+                    .foregroundStyle(Color.soriInk)
+            } icon: {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(Color.soriWarning)
+            }
+        }
+    }
+
+    #if DEBUG
+    private func openDebugDestinationIfNeeded() {
+        guard path.isEmpty else { return }
+        let arguments = ProcessInfo.processInfo.arguments
+
+        if arguments.contains("--learn-audio") {
+            path.append(.audio)
+        } else if arguments.contains("--learn-lesson"),
+                  let lesson = env.curriculum.curriculum.lessons.first {
+            path.append(.lesson(lesson))
+        } else if arguments.contains("--learn-chapter"),
+                  let chapter = env.curriculum.curriculum.chapters.first {
+            path.append(.chapter(chapter))
+        }
+    }
+    #endif
+}
+
+// MARK: - Chapter row
+
+private struct ChapterRow: View {
+    let chapter: CurriculumChapter
+    let completed: Int
+
+    private var isComplete: Bool {
+        completed == chapter.lessons.count
+    }
+
+    var body: some View {
+        HStack(spacing: SoriSpacing.md) {
+            ZStack {
+                Circle()
+                    .fill(
+                        isComplete
+                            ? Color.soriCorrect.opacity(0.14)
+                            : Color.soriAccent.opacity(0.12)
+                    )
+                if isComplete {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(Color.soriCorrect)
+                } else {
+                    Text("\(chapter.number)")
+                        .font(SoriFont.captionStrong)
+                        .foregroundStyle(Color.soriAccent)
+                }
+            }
+            .frame(width: 34, height: 34)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(chapter.title)
+                    .font(SoriFont.callout)
+                    .foregroundStyle(Color.soriInk)
+                Text(chapter.englishTitle)
+                    .font(SoriFont.caption)
+                    .foregroundStyle(Color.soriSecondary)
+            }
+
+            Spacer(minLength: SoriSpacing.sm)
+
+            Text("\(completed)/\(chapter.lessons.count)")
+                .font(SoriFont.captionStrong)
+                .foregroundStyle(completed > 0 ? Color.soriAccent : Color.soriTertiary)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(Color.soriTertiary)
+        }
+        .padding(.vertical, 9)
+        .contentShape(Rectangle())
     }
 }
 
@@ -201,6 +398,7 @@ private struct RoadmapLevel: Identifiable {
 
 private struct RoadmapLevelRow: View {
     let level: RoadmapLevel
+    let progress: Double?
 
     var body: some View {
         HStack(spacing: SoriSpacing.sm) {
@@ -231,82 +429,17 @@ private struct RoadmapLevelRow: View {
 
             Spacer()
 
-            if level.status == .planned {
+            if let progress, level.status == .current {
+                Text("\(Int((progress * 100).rounded()))%")
+                    .font(SoriFont.captionStrong)
+                    .foregroundStyle(Color.soriAccent)
+            } else if level.status == .planned {
                 Image(systemName: "lock")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(Color.soriTertiary)
-            } else {
-                Text("0%")
-                    .font(SoriFont.captionStrong)
-                    .foregroundStyle(Color.soriAccent)
             }
         }
         .padding(.vertical, 7)
         .padding(.horizontal, SoriSpacing.xs)
-    }
-}
-
-// MARK: - Lesson preview
-
-private struct LessonPreviewSheet: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: SoriSpacing.lg) {
-                    SoriBadge(text: "TOPIK 1 · 4 min")
-
-                    Text("한글을 배워요 ①")
-                        .font(SoriFont.reading(34))
-                        .foregroundStyle(Color.soriInk)
-
-                    Text("Basic vowels, basic consonants, and syllable structure.")
-                        .font(SoriFont.body)
-                        .foregroundStyle(Color.soriSecondary)
-
-                    SoriCard {
-                        VStack(alignment: .leading, spacing: SoriSpacing.sm) {
-                            Text("By the end of this lesson")
-                                .font(SoriFont.captionStrong)
-                                .foregroundStyle(Color.soriSecondary)
-                            Label("Read and write ㅏ ㅓ ㅗ ㅜ ㅡ ㅣ", systemImage: "checkmark.circle")
-                            Label("Recognise ㄱ ㄴ ㄷ ㄹ ㅁ ㅂ ㅅ ㅇ ㅈ ㅎ", systemImage: "checkmark.circle")
-                            Label("Build a basic C + V syllable", systemImage: "checkmark.circle")
-                        }
-                        .font(SoriFont.body)
-                        .foregroundStyle(Color.soriInk)
-                    }
-
-                    SoriCard {
-                        VStack(alignment: .leading, spacing: SoriSpacing.sm) {
-                            Text("Preview")
-                                .font(SoriFont.captionStrong)
-                                .foregroundStyle(Color.soriSecondary)
-                            Text("가 나 다 라 마 바 사")
-                                .font(SoriFont.korean(34))
-                                .foregroundStyle(Color.soriInk)
-                            Text("Each block is one syllable: consonant + vowel.")
-                                .font(SoriFont.caption)
-                                .foregroundStyle(Color.soriSecondary)
-                        }
-                    }
-
-                    Text("Full explanations, audio, vocabulary, and review cards arrive with the curriculum milestone.")
-                        .font(SoriFont.caption)
-                        .foregroundStyle(Color.soriSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding(SoriSpacing.lg)
-            }
-            .soriScreenBackground()
-            .navigationTitle("Lesson 1")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close") { dismiss() }
-                }
-            }
-        }
     }
 }

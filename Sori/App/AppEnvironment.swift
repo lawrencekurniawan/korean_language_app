@@ -9,6 +9,8 @@ final class AppEnvironment {
     let library: LibraryRepository
     let importer: CorpusImporter
     let practice: PracticeRepository
+    let curriculum: CurriculumStore
+    let personalAudio: PersonalAudioStore
     let startupError: String?
 
     var libraryStatus: LibraryStatus = .unknown
@@ -23,6 +25,8 @@ final class AppEnvironment {
         self.library = LibraryRepository(database: database)
         self.importer = CorpusImporter(database: database)
         self.practice = PracticeRepository(database: database)
+        self.curriculum = CurriculumStore(database: database)
+        self.personalAudio = PersonalAudioStore()
     }
 
     var isSeedingLibrary: Bool {
@@ -68,6 +72,10 @@ final class AppEnvironment {
 
     func libraryDidChange() async {
         await refreshLibrary()
+    }
+
+    func prepareCurriculum() async {
+        await curriculum.refresh()
     }
 
     static func live() -> AppEnvironment {

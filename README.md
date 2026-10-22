@@ -2,7 +2,7 @@
 
 **Sori (소리)** is a personal, offline-first Korean learning app for iPhone.
 
-It combines four practice loops with a structured curriculum:
+It combines four study areas with a structured curriculum:
 
 - **Learn** — a deterministic Vitamin Korean 1 curriculum with Korean Grammar in Use references
 - **Practice** — one-minute reading and typing sprints measured in characters per minute (CPM)
@@ -14,7 +14,7 @@ explicitly download a library pack or a subtitle file.
 
 ## Status
 
-Milestone 4 — Speak practice with on-device text-to-speech. Complete.
+Milestone 5 — Vitamin Korean 1 curriculum with personal textbook audio. Complete.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
@@ -23,7 +23,7 @@ Milestone 4 — Speak practice with on-device text-to-speech. Complete.
 | M2 | Reading practice | Complete |
 | M3 | Typing practice + 두벌식 keyboard | Complete |
 | M4 | Speak tab + TTS | Complete |
-| M5 | Vitamin Korean 1 curriculum + textbook audio | Planned |
+| M5 | Vitamin Korean 1 curriculum + textbook audio | Complete |
 | M6 | Spaced repetition review | Planned |
 | M7 | Progress charts, session management, time tracking | Planned |
 | M8 | SideStore IPA, backup/restore, polish | Planned |
@@ -163,6 +163,39 @@ Settings → Accessibility → Spoken Content → Voices → Korean.
 
 Speak never writes practice sessions, exposure records, or analytics. Nothing is
 uploaded, and no audio is recorded.
+
+## Learn curriculum
+
+Learn follows the **Vitamin Korean 1** sequence in 15 lessons across five chapters:
+Hangeul, introductions, time and dates, places and locations, and the future. Every
+lesson is designed to take 3–5 minutes and stays at TOPIK 1. Explanations are in
+English first, with Korean examples, and no romanisation after Hangul is introduced.
+
+Each lesson contains learning goals, six vocabulary items, three grammar points,
+focused practice with revealable answers, a culture note, and **Korean Grammar in
+Use: Beginning** topic references. Conversation lessons add a short dialogue. The
+explanations, examples, dialogues, and practice items are original study material
+written for Sori; textbook pages are not included. The curriculum is authored content
+under CC BY-NC-SA 4.0, and its version is shown in Settings.
+
+The Learn tab shows a Continue card for the next unfinished lesson, chapter progress,
+a collapsible TOPIK 1–6 roadmap, and the chapter list. Opening a lesson marks it in
+progress; **Mark lesson complete** records it locally in SQLite. Completing lessons
+will feed grammar and vocabulary cards into the spaced-repetition milestone.
+
+### Personal textbook audio
+
+The app does not ship textbook audio. If you own the Vitamin Korean 1 audio, import
+the MP3/M4A/WAV/AAC/CAF/AIFF files — or a ZIP or folder containing them — from the
+Files app. Sori stores them in its private Application Support directory, matches
+tracks to lessons by the last number in each file name (tracks 1–94), and shows them
+on the lesson page and under **Settings → Personal audio**. Matching is best effort;
+the All audio screen always lists every imported track.
+
+Imported audio is excluded from iCloud backup and never enters the library, the
+public repository, or a Release build. Delete individual tracks by swiping, or clear
+the whole folder from Personal audio. The original files in Files or iCloud are not
+affected.
 
 ## Personal content
 

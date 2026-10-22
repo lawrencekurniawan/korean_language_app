@@ -1,0 +1,1357 @@
+{
+  "curriculumVersion": "1.0.0",
+  "spine": "Vitamin Korean 1",
+  "reference": "Korean Grammar in Use: Beginning",
+  "chapters": [
+    {
+      "id": "chapter-1",
+      "number": 1,
+      "title": "한글",
+      "englishTitle": "Hangeul",
+      "summary": "Read and write the Korean alphabet, from single vowels to final consonants.",
+      "culture": "Hangeul was created in 1443 and published in 1446. Its consonant shapes come from the mouth, tongue, and throat, which is why the alphabet can be learned quickly.",
+      "lessons": [
+        {
+          "id": "1-1",
+          "number": 1,
+          "title": "한글을 배워요 ①",
+          "englishTitle": "Let's learn Hangeul ①",
+          "summary": "Six basic vowels, ten basic consonants, and the shape of one syllable block.",
+          "topik": 1,
+          "minutes": 3,
+          "goals": [
+            "Read and write ㅏ ㅓ ㅗ ㅜ ㅡ ㅣ",
+            "Recognise ㄱ ㄴ ㄷ ㄹ ㅁ ㅂ ㅅ ㅇ ㅈ ㅎ",
+            "Combine a consonant and a vowel into one syllable"
+          ],
+          "vocabulary": [
+            { "korean": "아이", "english": "child" },
+            { "korean": "오이", "english": "cucumber" },
+            { "korean": "나", "english": "I, me" },
+            { "korean": "너", "english": "you" },
+            { "korean": "어머니", "english": "mother" },
+            { "korean": "아버지", "english": "father" }
+          ],
+          "grammar": [
+            {
+              "id": "1-1-vowels",
+              "title": "Three shapes build every vowel",
+              "pattern": "·  —  |",
+              "explanation": "Korean vowels are drawn from heaven (a round dot), earth (a flat line), and a person (a vertical line). The position of the dot changes the sound. ㅏ opens the mouth wide, ㅓ is deeper, ㅗ is rounded, ㅜ is rounded with the lips forward, ㅡ is flat, and ㅣ is a clear ee sound.",
+              "examples": [
+                { "korean": "ㅏ", "english": "open ah" },
+                { "korean": "ㅓ", "english": "deeper uh" },
+                { "korean": "ㅗ", "english": "rounded oh" },
+                { "korean": "ㅜ", "english": "rounded oo" },
+                { "korean": "ㅡ", "english": "flat uh" },
+                { "korean": "ㅣ", "english": "clear ee" }
+              ],
+              "tip": "The dot belongs on the right of ㅏ and on the left of ㅓ. Moving it changes the vowel completely."
+            },
+            {
+              "id": "1-1-consonants",
+              "title": "Ten basic consonants",
+              "pattern": "ㄱ ㄴ ㄷ ㄹ ㅁ ㅂ ㅅ ㅇ ㅈ ㅎ",
+              "explanation": "Each basic consonant imitates a speech organ: ㄱ the back of the tongue, ㄴ the tongue tip, ㅁ the lips, ㅅ the teeth, and ㅇ the throat. The remaining letters add strokes to those five shapes.",
+              "examples": [
+                { "korean": "가", "english": "a light k released into ah" },
+                { "korean": "나", "english": "n + ah" },
+                { "korean": "다", "english": "d + ah" },
+                { "korean": "마", "english": "m + ah" },
+                { "korean": "사", "english": "s + ah" },
+                { "korean": "아", "english": "a silent holder + ah" }
+              ],
+              "tip": "At the start of a syllable, ㅇ is silent. It holds the vowel when there is no consonant sound."
+            },
+            {
+              "id": "1-1-syllables",
+              "title": "One block, one syllable",
+              "pattern": "consonant + vowel = syllable",
+              "explanation": "Korean is written in square blocks. A consonant sits on the left or top, and a vowel sits on the right or below. Each block is read as one syllable, left to right and top to bottom.",
+              "examples": [
+                { "korean": "가", "english": "ㄱ + ㅏ" },
+                { "korean": "너", "english": "ㄴ + ㅓ" },
+                { "korean": "도", "english": "ㄷ + ㅗ" },
+                { "korean": "무", "english": "ㅁ + ㅜ" },
+                { "korean": "스", "english": "ㅅ + ㅡ" },
+                { "korean": "이", "english": "ㅇ + ㅣ" }
+              ],
+              "tip": "Vowels with a vertical line stand to the right of the consonant. Vowels with a horizontal line sit below it."
+            }
+          ],
+          "dialogue": [],
+          "practice": [
+            {
+              "prompt": "Which vowel is open and bright: ㅏ or ㅓ?",
+              "answer": "ㅏ. It is written with the dot on the right of the vertical line."
+            },
+            {
+              "prompt": "Read the block 가.",
+              "answer": "A light k released into an open ah."
+            },
+            {
+              "prompt": "Build 마 from its two parts.",
+              "answer": "ㅁ + ㅏ = 마."
+            }
+          ],
+          "culture": "Korean is written in syllable blocks rather than a straight line of letters, so a short word can look like a small square.",
+          "reference": [
+            "KGIU Beginning · Hangeul and pronunciation",
+            "KGIU Beginning · syllable structure"
+          ],
+          "audioTracks": [1, 2, 3, 4, 5, 6]
+        },
+        {
+          "id": "1-2",
+          "number": 2,
+          "title": "한글을 배워요 ②",
+          "englishTitle": "Let's learn Hangeul ②",
+          "summary": "Tense consonants, aspirated consonants, and the compound vowels.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Hear the difference between ㄲ and ㅋ",
+            "Read the tense and aspirated consonant sets",
+            "Recognise the compound vowels built from ㅑ ㅕ ㅛ ㅠ"
+          ],
+          "vocabulary": [
+            { "korean": "꼬리", "english": "tail" },
+            { "korean": "토끼", "english": "rabbit" },
+            { "korean": "커피", "english": "coffee" },
+            { "korean": "피자", "english": "pizza" },
+            { "korean": "이야기", "english": "story" },
+            { "korean": "왜", "english": "why" }
+          ],
+          "grammar": [
+            {
+              "id": "1-2-tense",
+              "title": "Tense consonants",
+              "pattern": "ㄲ ㄸ ㅃ ㅉ ㅆ",
+              "explanation": "Tense consonants are made with a tight throat and no puff of air. English speakers often hear them as stronger versions of the plain letters. In Korean they are separate sounds and can change a word.",
+              "examples": [
+                { "korean": "꼬리", "english": "tail" },
+                { "korean": "띠", "english": "belt" },
+                { "korean": "오빠", "english": "older brother, said by a younger woman" },
+                { "korean": "짜다", "english": "to be salty" },
+                { "korean": "씨", "english": "seed, or a polite name suffix" }
+              ],
+              "tip": "Put your hand in front of your mouth. A tense sound should move almost no air."
+            },
+            {
+              "id": "1-2-aspirated",
+              "title": "Aspirated consonants",
+              "pattern": "ㅋ ㅌ ㅍ ㅊ",
+              "explanation": "Aspirated consonants carry a strong puff of air. They are the breathy partners of ㄱ, ㄷ, ㅂ, and ㅈ. The puff is the point of the sound, so do not hold it back.",
+              "examples": [
+                { "korean": "코", "english": "nose" },
+                { "korean": "토끼", "english": "rabbit" },
+                { "korean": "피자", "english": "pizza" },
+                { "korean": "차", "english": "tea, or a car" }
+              ],
+              "tip": "A sheet of paper held in front of your lips should move when you say ㅋ, ㅌ, ㅍ, or ㅊ."
+            },
+            {
+              "id": "1-2-compound",
+              "title": "Compound vowels",
+              "pattern": "ㅑ ㅕ ㅛ ㅠ · ㅘ ㅝ ㅟ ㅢ · ㅒ ㅖ ㅚ ㅙ ㅞ",
+              "explanation": "Compound vowels begin with one sound and glide into another. The ㅑ family adds a y-glide to the basic vowels. The ㅘ family glides from a rounded o or u. The ㅒ family glides from a bright e.",
+              "examples": [
+                { "korean": "야", "english": "y + ah" },
+                { "korean": "여", "english": "y + uh" },
+                { "korean": "요", "english": "y + oh" },
+                { "korean": "유", "english": "y + oo" },
+                { "korean": "와", "english": "oo + ah" },
+                { "korean": "의", "english": "a flat uh gliding into ee" }
+              ],
+              "tip": "Say the first sound, then let your mouth move into the second. Do not split the vowel into two syllables."
+            }
+          ],
+          "dialogue": [],
+          "practice": [
+            {
+              "prompt": "Which consonant is tense: ㅋ or ㄲ?",
+              "answer": "ㄲ. The tense sound is tight and has almost no puff of air."
+            },
+            {
+              "prompt": "Read 토끼.",
+              "answer": "An aspirated t, a rounded oh, a tense k, and ee: the word for rabbit."
+            },
+            {
+              "prompt": "Which vowel has a y-glide: ㅏ or ㅑ?",
+              "answer": "ㅑ."
+            }
+          ],
+          "culture": "Korean treats tight and breathy consonants as different letters. A learner who hears them as one sound will struggle with pairs such as ㄲ and ㅋ.",
+          "reference": [
+            "KGIU Beginning · consonants and pronunciation",
+            "KGIU Beginning · compound vowels"
+          ],
+          "audioTracks": [7, 8, 9, 10, 11, 12]
+        },
+        {
+          "id": "1-3",
+          "number": 3,
+          "title": "한글을 배워요 ③",
+          "englishTitle": "Let's learn Hangeul ③",
+          "summary": "Final consonants, double finals, and the liaison that carries a sound into the next syllable.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Read a syllable with a final consonant",
+            "Reduce a double final to one sound",
+            "Link a final consonant to a following vowel"
+          ],
+          "vocabulary": [
+            { "korean": "밥", "english": "rice, a meal" },
+            { "korean": "집", "english": "house, home" },
+            { "korean": "옷", "english": "clothes" },
+            { "korean": "값", "english": "price" },
+            { "korean": "닭", "english": "chicken" },
+            { "korean": "읽어요", "english": "reads" }
+          ],
+          "grammar": [
+            {
+              "id": "1-3-batchim",
+              "title": "Final consonants",
+              "pattern": "받침",
+              "explanation": "A consonant at the bottom of a syllable is called 받침. It closes the syllable. Korean reduces many written finals to seven representative sounds: ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, and ㅇ.",
+              "examples": [
+                { "korean": "밥", "english": "a closed b final" },
+                { "korean": "집", "english": "a closed b final" },
+                { "korean": "옷", "english": "a closed d final" },
+                { "korean": "강", "english": "a closed ng final" },
+                { "korean": "산", "english": "a closed n final" }
+              ],
+              "tip": "Do not add a vowel after the final. Stop the sound cleanly at the consonant."
+            },
+            {
+              "id": "1-3-double",
+              "title": "Double finals",
+              "pattern": "ㄳ ㄵ ㄺ ㄻ ㄼ ㅄ",
+              "explanation": "Some syllables carry two written consonants at the bottom. Only one is pronounced in the plain form; the other appears when the next syllable begins with a vowel.",
+              "examples": [
+                { "korean": "값", "english": "pronounced with a b final" },
+                { "korean": "앉아요", "english": "the ㄴ is carried into the next syllable" },
+                { "korean": "닭", "english": "pronounced with a k final" },
+                { "korean": "삶", "english": "pronounced with an m final" },
+                { "korean": "없어요", "english": "the ㅂ sound carries into a tense ss" }
+              ],
+              "tip": "Learn double finals as a pair: one sound now, the other sound when a vowel follows."
+            },
+            {
+              "id": "1-3-liaison",
+              "title": "Liaison",
+              "pattern": "받침 + vowel",
+              "explanation": "When a syllable ends in a consonant and the next syllable begins with ㅇ, the final consonant moves into the empty initial position. This is why written boundaries and spoken syllables do not always match.",
+              "examples": [
+                { "korean": "밥을", "english": "sounds like 바블" },
+                { "korean": "집에", "english": "sounds like 지베" },
+                { "korean": "옷이", "english": "sounds like 오시" },
+                { "korean": "값이", "english": "sounds like 갑시" }
+              ],
+              "tip": "Liaison is normal speech, not a shortcut. Practise it slowly, then let it flow."
+            }
+          ],
+          "dialogue": [],
+          "practice": [
+            {
+              "prompt": "Which seven sounds represent final consonants?",
+              "answer": "ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, and ㅇ."
+            },
+            {
+              "prompt": "How does 밥을 sound?",
+              "answer": "바블, because the final ㅂ moves into the next syllable."
+            },
+            {
+              "prompt": "Read 값.",
+              "answer": "A closed b final, even though two consonants are written."
+            }
+          ],
+          "culture": "Korean children learn 받침 as part of every syllable, so the final consonant is never an afterthought. Clean finals make speech easier to follow.",
+          "reference": [
+            "KGIU Beginning · final consonants",
+            "KGIU Beginning · pronunciation rules"
+          ],
+          "audioTracks": [13, 14, 15, 16, 17, 18]
+        }
+      ]
+    },
+    {
+      "id": "chapter-2",
+      "number": 2,
+      "title": "소개",
+      "englishTitle": "Introduction",
+      "summary": "Greet people, give your name, and talk about nationality and family.",
+      "culture": "A first meeting in Korea often begins with a small bow and a clear name. Asking about work or nationality is a normal way to find a shared topic.",
+      "lessons": [
+        {
+          "id": "2-1",
+          "number": 1,
+          "title": "만나서 반갑습니다",
+          "englishTitle": "Nice to meet you",
+          "summary": "Formal polite greetings, the subject marker, and the formal copula.",
+          "topik": 1,
+          "minutes": 5,
+          "goals": [
+            "Greet someone in a formal setting",
+            "Use -ㅂ니다/습니다 and -ㅂ니까?/습니까?",
+            "Mark the subject with 이/가",
+            "Say what someone is with 입니다"
+          ],
+          "vocabulary": [
+            { "korean": "안녕하세요", "english": "hello" },
+            { "korean": "만나서 반갑습니다", "english": "nice to meet you" },
+            { "korean": "이름", "english": "name" },
+            { "korean": "저", "english": "I, me (polite)" },
+            { "korean": "씨", "english": "Mr, Ms, a polite suffix after a name" },
+            { "korean": "네", "english": "yes" }
+          ],
+          "grammar": [
+            {
+              "id": "2-1-formal",
+              "title": "Formal polite present",
+              "pattern": "-ㅂ니다 / -습니다",
+              "explanation": "Add ㅂ니다 after a vowel stem and 습니다 after a consonant stem. This ending is used in meetings, presentations, announcements, and careful first conversations. The question form replaces 다 with 까.",
+              "examples": [
+                { "korean": "가다 → 갑니다", "english": "go" },
+                { "korean": "먹다 → 먹습니다", "english": "eat" },
+                { "korean": "좋다 → 좋습니다", "english": "be good" },
+                { "korean": "갑니까?", "english": "do you go?" },
+                { "korean": "먹습니까?", "english": "do you eat?" }
+              ],
+              "tip": "This is not old-fashioned speech. It is the safe choice when you are unsure how close you are to the listener. Stems ending in ㄹ drop it before ㅂ니다: 살다 → 삽니다."
+            },
+            {
+              "id": "2-1-subject",
+              "title": "Subject marker 이/가",
+              "pattern": "noun + 이 / 가",
+              "explanation": "이/가 marks the subject of a sentence. Use 이 after a final consonant and 가 after a vowel. It often introduces new information or points to who or what does something.",
+              "examples": [
+                { "korean": "제인이 학생입니다.", "english": "Jane is a student." },
+                { "korean": "물이 좋습니다.", "english": "The water is good." },
+                { "korean": "누가 선생님입니까?", "english": "Who is the teacher?" }
+              ],
+              "tip": "누구 becomes 누가 when it takes the subject marker."
+            },
+            {
+              "id": "2-1-copula",
+              "title": "The formal copula",
+              "pattern": "noun + 입니다 / 입니까?",
+              "explanation": "입니다 links a noun to another noun in formal polite speech. It means is, am, or are. The question form is 입니까? The ending does not change for a final consonant.",
+              "examples": [
+                { "korean": "저는 학생입니다.", "english": "I am a student." },
+                { "korean": "한국 사람입니까?", "english": "Are you Korean?" },
+                { "korean": "여기는 도서관입니다.", "english": "This place is a library." }
+              ],
+              "tip": "Do not add 이/가 to the noun before 입니다 unless the sentence needs a subject marker for emphasis."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "민호", "korean": "안녕하세요. 저는 민호입니다.", "english": "Hello. I am Minho." },
+            { "speaker": "제인", "korean": "안녕하세요. 저는 제인입니다. 만나서 반갑습니다.", "english": "Hello. I am Jane. Nice to meet you." },
+            { "speaker": "민호", "korean": "네, 만나서 반갑습니다.", "english": "Yes, nice to meet you too." }
+          ],
+          "practice": [
+            {
+              "prompt": "Complete formally: 저는 학생__.",
+              "answer": "입니다."
+            },
+            {
+              "prompt": "Ask formally: Are you a teacher?",
+              "answer": "선생님입니까?"
+            },
+            {
+              "prompt": "Choose 이 or 가: 물__ 차갑습니다.",
+              "answer": "이, because 물 ends in a consonant."
+            }
+          ],
+          "culture": "In a formal introduction, say your name slowly and clearly. A small bow and both hands on a business card are common when meeting someone older or in business.",
+          "reference": [
+            "KGIU Beginning · polite present tense",
+            "KGIU Beginning · subject particles 이/가",
+            "KGIU Beginning · copula 입니다"
+          ],
+          "audioTracks": [19, 20, 21, 22, 23, 24, 25]
+        },
+        {
+          "id": "2-2",
+          "number": 2,
+          "title": "저는 제인입니다",
+          "englishTitle": "I am Jane",
+          "summary": "Talk about nationality and jobs with the topic marker and the negative copula.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Use 은/는 to set the topic",
+            "Ask which one with 어느",
+            "Say what you are not with 이/가 아닙니다"
+          ],
+          "vocabulary": [
+            { "korean": "학생", "english": "student" },
+            { "korean": "선생님", "english": "teacher" },
+            { "korean": "의사", "english": "doctor" },
+            { "korean": "회사원", "english": "office worker" },
+            { "korean": "한국", "english": "Korea" },
+            { "korean": "미국", "english": "the United States" }
+          ],
+          "grammar": [
+            {
+              "id": "2-2-topic",
+              "title": "Topic marker 은/는",
+              "pattern": "noun + 은 / 는",
+              "explanation": "은/는 sets the topic of the sentence: as for this person or thing. Use 은 after a consonant and 는 after a vowel. It can also contrast two topics.",
+              "examples": [
+                { "korean": "저는 학생입니다.", "english": "As for me, I am a student." },
+                { "korean": "민호는 의사입니다.", "english": "Minho is a doctor." },
+                { "korean": "한국은 아름답습니다.", "english": "Korea is beautiful." }
+              ],
+              "tip": "이/가 points to the subject; 은/는 frames the topic. A sentence can contain both."
+            },
+            {
+              "id": "2-2-which",
+              "title": "Which one: 어느",
+              "pattern": "어느 + noun",
+              "explanation": "어느 asks which one among a known set. It comes directly before the noun.",
+              "examples": [
+                { "korean": "어느 나라 사람입니까?", "english": "Which country are you from?" },
+                { "korean": "어느 학교에 다닙니까?", "english": "Which school do you attend?" }
+              ],
+              "tip": "무슨 asks what kind; 어느 asks which one of a group."
+            },
+            {
+              "id": "2-2-negative",
+              "title": "Negative copula",
+              "pattern": "noun + 이/가 아닙니다",
+              "explanation": "To say that something is not a certain noun, add 이 아닙니다 after a consonant or 가 아닙니다 after a vowel.",
+              "examples": [
+                { "korean": "저는 의사가 아닙니다.", "english": "I am not a doctor." },
+                { "korean": "이것은 책이 아닙니다.", "english": "This is not a book." }
+              ],
+              "tip": "The negative copula is a full phrase: 이/가 + 아닙니다. Do not write 이/가 안 입니다."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "제인", "korean": "저는 제인입니다. 미국 사람입니다.", "english": "I am Jane. I am American." },
+            { "speaker": "민호", "korean": "아, 그래요? 저는 민호입니다. 한국 사람입니다.", "english": "Oh, really? I am Minho. I am Korean." },
+            { "speaker": "제인", "korean": "민호 씨는 학생입니까?", "english": "Minho, are you a student?" },
+            { "speaker": "민호", "korean": "아니요, 학생이 아닙니다. 회사원입니다.", "english": "No, I am not a student. I am an office worker." }
+          ],
+          "practice": [
+            {
+              "prompt": "Choose 은 or 는: 저__ 학생입니다.",
+              "answer": "는, because 저 ends in a vowel."
+            },
+            {
+              "prompt": "Say: I am not a doctor.",
+              "answer": "저는 의사가 아닙니다."
+            },
+            {
+              "prompt": "Ask: Which country are you from?",
+              "answer": "어느 나라 사람입니까?"
+            }
+          ],
+          "culture": "Korean conversations often establish nationality and occupation early. A simple answer with one detail is enough; long self-descriptions can feel formal.",
+          "reference": [
+            "KGIU Beginning · topic particles 은/는",
+            "KGIU Beginning · negative copula",
+            "KGIU Beginning · question words"
+          ],
+          "audioTracks": [26, 27, 28, 29, 30, 31]
+        },
+        {
+          "id": "2-3",
+          "number": 3,
+          "title": "이 사람은 누구예요?",
+          "englishTitle": "Who is this?",
+          "summary": "Introduce family and friends with the informal polite copula.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Use 이에요/예요 in friendly conversation",
+            "Say what someone is not with 아니에요",
+            "Ask who someone is"
+          ],
+          "vocabulary": [
+            { "korean": "가족", "english": "family" },
+            { "korean": "어머니", "english": "mother" },
+            { "korean": "아버지", "english": "father" },
+            { "korean": "동생", "english": "younger sibling" },
+            { "korean": "친구", "english": "friend" },
+            { "korean": "누구", "english": "who" }
+          ],
+          "grammar": [
+            {
+              "id": "2-3-copula",
+              "title": "Informal polite copula",
+              "pattern": "noun + 이에요 / 예요",
+              "explanation": "이에요/예요 is the everyday polite version of 입니다. Use 이에요 after a consonant and 예요 after a vowel. The question form uses the same ending with a rising tone.",
+              "examples": [
+                { "korean": "저는 학생이에요.", "english": "I am a student." },
+                { "korean": "제인은 의사예요.", "english": "Jane is a doctor." },
+                { "korean": "이것은 뭐예요?", "english": "What is this?" }
+              ],
+              "tip": "After a vowel, write 예요. 의사 + 예요 becomes 의사예요; after a consonant, 학생 + 이에요 becomes 학생이에요."
+            },
+            {
+              "id": "2-3-negative",
+              "title": "Informal negative copula",
+              "pattern": "noun + 이/가 아니에요",
+              "explanation": "Use 이 아니에요 after a consonant and 가 아니에요 after a vowel to say that something is not a certain noun.",
+              "examples": [
+                { "korean": "동생은 학생이 아니에요.", "english": "My younger sibling is not a student." },
+                { "korean": "저는 의사가 아니에요.", "english": "I am not a doctor." }
+              ],
+              "tip": "This is the friendly match for 이/가 아닙니다."
+            },
+            {
+              "id": "2-3-who",
+              "title": "Who: 누구",
+              "pattern": "누구 / 누가",
+              "explanation": "누구 means who. As a subject it becomes 누가. It can also follow a topic marker: 이 사람은 누구예요?",
+              "examples": [
+                { "korean": "이 사람은 누구예요?", "english": "Who is this person?" },
+                { "korean": "누가 선생님이에요?", "english": "Who is the teacher?" }
+              ],
+              "tip": "누구 + 이/가 contracts to 누가. Do not say 누구가."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "제인", "korean": "이 사람은 누구예요?", "english": "Who is this person?" },
+            { "speaker": "민호", "korean": "제 친구예요. 이름은 유키예요.", "english": "She is my friend. Her name is Yuki." },
+            { "speaker": "제인", "korean": "유키 씨는 학생이에요?", "english": "Yuki, are you a student?" },
+            { "speaker": "민호", "korean": "아니요, 학생이 아니에요. 선생님이에요.", "english": "No, she is not a student. She is a teacher." }
+          ],
+          "practice": [
+            {
+              "prompt": "Choose 이에요 or 예요: 저는 학생__.",
+              "answer": "이에요, because 학생 ends in a consonant."
+            },
+            {
+              "prompt": "Say: I am not a doctor. (friendly polite)",
+              "answer": "저는 의사가 아니에요."
+            },
+            {
+              "prompt": "Ask: Who is this person?",
+              "answer": "이 사람은 누구예요?"
+            }
+          ],
+          "culture": "When introducing someone, give the relationship first and the name second: 제 친구예요, 유키예요. It sounds warmer than starting with the name.",
+          "reference": [
+            "KGIU Beginning · copula 이에요/예요",
+            "KGIU Beginning · negative copula",
+            "KGIU Beginning · question words"
+          ],
+          "audioTracks": [32, 33, 34, 35, 36, 37]
+        }
+      ]
+    },
+    {
+      "id": "chapter-3",
+      "number": 3,
+      "title": "시간과 날짜",
+      "englishTitle": "Time and Date",
+      "summary": "Talk about daily routines, dates, and what happened over the weekend.",
+      "culture": "Korean dates run year, month, day. Many traditional holidays follow the lunar calendar, so their Gregorian dates change each year.",
+      "lessons": [
+        {
+          "id": "3-1",
+          "number": 1,
+          "title": "몇 시에 일어나요?",
+          "englishTitle": "What time do you get up?",
+          "summary": "Daily routines with the object marker, time particle, and polite informal present.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Mark an object with 을/를",
+            "Say when something happens with 에",
+            "Use -아요/어요 in everyday speech"
+          ],
+          "vocabulary": [
+            { "korean": "일어나다", "english": "to get up" },
+            { "korean": "자다", "english": "to sleep" },
+            { "korean": "먹다", "english": "to eat" },
+            { "korean": "공부하다", "english": "to study" },
+            { "korean": "학교", "english": "school" },
+            { "korean": "아침", "english": "morning, breakfast" }
+          ],
+          "grammar": [
+            {
+              "id": "3-1-object",
+              "title": "Object marker 을/를",
+              "pattern": "noun + 을 / 를",
+              "explanation": "을/를 marks the object of an action. Use 을 after a final consonant and 를 after a vowel. In casual speech it is often dropped.",
+              "examples": [
+                { "korean": "밥을 먹어요.", "english": "I eat a meal." },
+                { "korean": "한국어를 공부해요.", "english": "I study Korean." },
+                { "korean": "영화를 봐요.", "english": "I watch a movie." }
+              ],
+              "tip": "Do not put 을/를 on the subject. If the noun is doing the action, use 이/가 or 은/는."
+            },
+            {
+              "id": "3-1-time",
+              "title": "Time particle 에",
+              "pattern": "time noun + 에",
+              "explanation": "에 marks the time when something happens. It attaches to clock times, days, months, and years. Do not use it with 어제, 오늘, 내일, or 언제.",
+              "examples": [
+                { "korean": "아침에 일어나요.", "english": "I get up in the morning." },
+                { "korean": "세 시에 공부해요.", "english": "I study at three o'clock." },
+                { "korean": "월요일에 학교에 가요.", "english": "I go to school on Monday." }
+              ],
+              "tip": "오늘, 어제, 내일, and 언제 never take 에."
+            },
+            {
+              "id": "3-1-polite",
+              "title": "Polite informal present",
+              "pattern": "-아요 / -어요 / -해요",
+              "explanation": "This is the everyday polite ending. After ㅏ or ㅗ use 아요; after other vowels use 어요; 하다 verbs become 해요. It is friendly but still polite.",
+              "examples": [
+                { "korean": "가다 → 가요", "english": "go" },
+                { "korean": "먹다 → 먹어요", "english": "eat" },
+                { "korean": "공부하다 → 공부해요", "english": "study" },
+                { "korean": "좋다 → 좋아요", "english": "be good" }
+              ],
+              "tip": "When the stem already ends in the same vowel, the sounds merge: 가 + 아요 → 가요."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "민호", "korean": "제인 씨는 몇 시에 일어나요?", "english": "Jane, what time do you get up?" },
+            { "speaker": "제인", "korean": "아침 일곱 시에 일어나요.", "english": "I get up at seven in the morning." },
+            { "speaker": "민호", "korean": "아침에 뭐 해요?", "english": "What do you do in the morning?" },
+            { "speaker": "제인", "korean": "밥을 먹어요. 그리고 학교에 가요.", "english": "I eat breakfast. Then I go to school." }
+          ],
+          "practice": [
+            {
+              "prompt": "Choose 을 or 를: 밥__ 먹어요.",
+              "answer": "을, because 밥 ends in a consonant."
+            },
+            {
+              "prompt": "Add the time particle: 아침__ 일어나요.",
+              "answer": "아침에 일어나요."
+            },
+            {
+              "prompt": "Change to polite informal: 공부하다.",
+              "answer": "공부해요."
+            }
+          ],
+          "culture": "School and work days often start early in Korea, so 몇 시에 일어나요? is a common small-talk question. The answer usually includes a time and one morning habit.",
+          "reference": [
+            "KGIU Beginning · object particles 을/를",
+            "KGIU Beginning · time particle 에",
+            "KGIU Beginning · polite informal present"
+          ],
+          "audioTracks": [38, 39, 40, 41, 42, 43, 44]
+        },
+        {
+          "id": "3-2",
+          "number": 2,
+          "title": "오늘이 몇 월 며칠이에요?",
+          "englishTitle": "What is the date today?",
+          "summary": "Dates, weekdays, from-to ranges, and polite negation with -지 않다.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Say months, days, and weekdays",
+            "Use 부터 and 까지 for a range",
+            "Negate a verb with -지 않다"
+          ],
+          "vocabulary": [
+            { "korean": "월", "english": "month" },
+            { "korean": "일", "english": "day" },
+            { "korean": "요일", "english": "day of the week" },
+            { "korean": "월요일", "english": "Monday" },
+            { "korean": "주말", "english": "weekend" },
+            { "korean": "몇", "english": "how many, which number" }
+          ],
+          "grammar": [
+            {
+              "id": "3-2-range",
+              "title": "From to",
+              "pattern": "noun + 부터 noun + 까지",
+              "explanation": "부터 marks the start of a time range and 까지 marks the end. They can attach to days, dates, or clock times.",
+              "examples": [
+                { "korean": "월요일부터 금요일까지 공부해요.", "english": "I study from Monday to Friday." },
+                { "korean": "아홉 시부터 열두 시까지 수업이 있어요.", "english": "I have class from nine to twelve." }
+              ],
+              "tip": "The order is start부터 end까지. Do not reverse them."
+            },
+            {
+              "id": "3-2-what",
+              "title": "What kind: 무슨",
+              "pattern": "무슨 + noun",
+              "explanation": "무슨 asks what kind of thing something is. It comes before the noun, like an adjective.",
+              "examples": [
+                { "korean": "무슨 요일이에요?", "english": "What day of the week is it?" },
+                { "korean": "무슨 책을 읽어요?", "english": "What kind of book are you reading?" }
+              ],
+              "tip": "몇 asks a number; 무슨 asks a kind."
+            },
+            {
+              "id": "3-2-negative",
+              "title": "Polite negation",
+              "pattern": "-지 않다",
+              "explanation": "Add -지 않다 to a verb or adjective stem to say that something does not happen or is not the case. In casual speech, 안 before the verb can replace it.",
+              "examples": [
+                { "korean": "오늘은 공부하지 않아요.", "english": "I am not studying today." },
+                { "korean": "날씨가 좋지 않아요.", "english": "The weather is not good." },
+                { "korean": "커피를 마시지 않아요.", "english": "I do not drink coffee." }
+              ],
+              "tip": "Do not use -지 않다 in commands or suggestions. For “don't do it”, use -지 마세요."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "제인", "korean": "오늘이 몇 월 며칠이에요?", "english": "What is the date today?" },
+            { "speaker": "민호", "korean": "시월 이십일일이에요.", "english": "It is October 21st." },
+            { "speaker": "제인", "korean": "무슨 요일이에요?", "english": "What day of the week is it?" },
+            { "speaker": "민호", "korean": "수요일이에요.", "english": "It is Wednesday." }
+          ],
+          "practice": [
+            {
+              "prompt": "Say: from Monday to Friday.",
+              "answer": "월요일부터 금요일까지."
+            },
+            {
+              "prompt": "Choose 무슨 or 몇: __ 요일이에요?",
+              "answer": "무슨."
+            },
+            {
+              "prompt": "Negate politely: 오늘은 공부해요.",
+              "answer": "오늘은 공부하지 않아요."
+            }
+          ],
+          "culture": "Korean date order is year, month, day, and the month name often uses a native number: 시월 for October. Listening for the month first helps you follow announcements.",
+          "reference": [
+            "KGIU Beginning · time and date expressions",
+            "KGIU Beginning · negation",
+            "KGIU Beginning · question words"
+          ],
+          "audioTracks": [45, 46, 47, 48, 49, 50]
+        },
+        {
+          "id": "3-3",
+          "number": 3,
+          "title": "주말에 무엇을 했어요?",
+          "englishTitle": "What did you do on the weekend?",
+          "summary": "Tell a short weekend story with the past tense and sequence connectors.",
+          "topik": 1,
+          "minutes": 5,
+          "goals": [
+            "Connect two actions with -고",
+            "Say after doing something with -(으)ㄴ 후에",
+            "Use the polite past tense -았어요/었어요"
+          ],
+          "vocabulary": [
+            { "korean": "어제", "english": "yesterday" },
+            { "korean": "주말", "english": "weekend" },
+            { "korean": "영화", "english": "movie" },
+            { "korean": "산책", "english": "a walk" },
+            { "korean": "숙제", "english": "homework" },
+            { "korean": "만나다", "english": "to meet" }
+          ],
+          "grammar": [
+            {
+              "id": "3-3-and",
+              "title": "Connecting actions",
+              "pattern": "verb + -고",
+              "explanation": "-고 connects two actions in order or adds one action to another. The tense is shown on the final verb.",
+              "examples": [
+                { "korean": "친구를 만나고 영화를 봤어요.", "english": "I met a friend and watched a movie." },
+                { "korean": "밥을 먹고 산책했어요.", "english": "I ate and then took a walk." }
+              ],
+              "tip": "-고 can also mean and without a strict time order. Context decides."
+            },
+            {
+              "id": "3-3-after",
+              "title": "After doing",
+              "pattern": "verb + -(으)ㄴ 후에",
+              "explanation": "Add -은 후에 after a consonant stem and -ㄴ 후에 after a vowel stem. It means after doing something. The tense appears on the second clause.",
+              "examples": [
+                { "korean": "숙제를 한 후에 영화를 봤어요.", "english": "After doing homework, I watched a movie." },
+                { "korean": "밥을 먹은 후에 산책했어요.", "english": "After eating, I took a walk." }
+              ],
+              "tip": "후에 can be replaced by 뒤에 or 다음에 without changing the meaning."
+            },
+            {
+              "id": "3-3-past",
+              "title": "Polite past tense",
+              "pattern": "-았어요 / -었어요 / -했어요",
+              "explanation": "After ㅏ or ㅗ use 았어요; after other vowels use 었어요; 하다 verbs become 했어요. This is the everyday polite past.",
+              "examples": [
+                { "korean": "가다 → 갔어요", "english": "went" },
+                { "korean": "먹다 → 먹었어요", "english": "ate" },
+                { "korean": "공부하다 → 공부했어요", "english": "studied" },
+                { "korean": "재미있다 → 재미있었어요", "english": "was interesting" }
+              ],
+              "tip": "The past ending attaches to the stem, then the polite 요 is added."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "민호", "korean": "주말에 뭐 했어요?", "english": "What did you do on the weekend?" },
+            { "speaker": "제인", "korean": "친구를 만나고 영화를 봤어요.", "english": "I met a friend and watched a movie." },
+            { "speaker": "민호", "korean": "영화가 재미있었어요?", "english": "Was the movie interesting?" },
+            { "speaker": "제인", "korean": "네, 아주 재미있었어요.", "english": "Yes, it was very interesting." }
+          ],
+          "practice": [
+            {
+              "prompt": "Connect: 친구를 만났어요. + 영화를 봤어요.",
+              "answer": "친구를 만나고 영화를 봤어요."
+            },
+            {
+              "prompt": "Say: After doing homework, I took a walk.",
+              "answer": "숙제를 한 후에 산책했어요."
+            },
+            {
+              "prompt": "Change to past: 공부해요.",
+              "answer": "공부했어요."
+            }
+          ],
+          "culture": "Monday small talk often starts with the weekend. A two-part answer, one activity plus one detail, sounds natural and keeps the conversation moving.",
+          "reference": [
+            "KGIU Beginning · past tense",
+            "KGIU Beginning · connecting clauses",
+            "KGIU Beginning · after doing"
+          ],
+          "audioTracks": [51, 52, 53, 54, 55, 56]
+        }
+      ]
+    },
+    {
+      "id": "chapter-4",
+      "number": 4,
+      "title": "위치와 장소",
+      "englishTitle": "Location and Places",
+      "summary": "Describe where things are, what happens in a place, and how to get somewhere.",
+      "culture": "Korean directions often use landmarks rather than street names. A bank, a hospital, or a convenience store is a more useful anchor than a road number.",
+      "lessons": [
+        {
+          "id": "4-1",
+          "number": 1,
+          "title": "가방 안에 책과 공책이 있어요",
+          "englishTitle": "There is a book and a notebook in the bag",
+          "summary": "Existence, position nouns, and joining two things with 와/과.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Say that something exists or does not exist",
+            "Place an object with 에",
+            "Join two nouns with 와/과"
+          ],
+          "vocabulary": [
+            { "korean": "가방", "english": "bag" },
+            { "korean": "책", "english": "book" },
+            { "korean": "공책", "english": "notebook" },
+            { "korean": "책상", "english": "desk" },
+            { "korean": "위", "english": "top, above" },
+            { "korean": "아래", "english": "bottom, below" }
+          ],
+          "grammar": [
+            {
+              "id": "4-1-exist",
+              "title": "Existence",
+              "pattern": "noun + 이/가 있다 / 없다",
+              "explanation": "있다 means to exist or to have; 없다 means not to exist or not to have. The thing that exists takes 이/가.",
+              "examples": [
+                { "korean": "책이 있어요.", "english": "There is a book." },
+                { "korean": "시간이 없어요.", "english": "I do not have time." },
+                { "korean": "친구가 있어요.", "english": "I have a friend." }
+              ],
+              "tip": "The possessed thing is the subject, so it takes 이/가, not 을/를."
+            },
+            {
+              "id": "4-1-location",
+              "title": "Location particle 에",
+              "pattern": "place + 에",
+              "explanation": "에 marks where something exists when used with 있다 or 없다. Position nouns such as 안, 위, 아래, 앞, and 뒤 come before 에.",
+              "examples": [
+                { "korean": "가방 안에 책이 있어요.", "english": "There is a book in the bag." },
+                { "korean": "책상 위에 공책이 있어요.", "english": "There is a notebook on the desk." },
+                { "korean": "의자 아래에 가방이 없어요.", "english": "There is no bag under the chair." }
+              ],
+              "tip": "에 marks existence here. 에서 marks where an action happens."
+            },
+            {
+              "id": "4-1-and",
+              "title": "Joining nouns",
+              "pattern": "noun + 와/과",
+              "explanation": "와/과 means and between nouns. Use 과 after a consonant and 와 after a vowel. In casual speech 하고 or 랑 can replace it.",
+              "examples": [
+                { "korean": "책과 공책", "english": "a book and a notebook" },
+                { "korean": "사과와 우유", "english": "an apple and milk" }
+              ],
+              "tip": "와/과 joins nouns only. To join sentences, use -고."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "제인", "korean": "가방 안에 뭐가 있어요?", "english": "What is in the bag?" },
+            { "speaker": "민호", "korean": "책과 공책이 있어요.", "english": "There are a book and a notebook." },
+            { "speaker": "제인", "korean": "책상 위에도 책이 있어요?", "english": "Is there a book on the desk too?" },
+            { "speaker": "민호", "korean": "아니요, 책상 위에는 없어요.", "english": "No, there is not one on the desk." }
+          ],
+          "practice": [
+            {
+              "prompt": "Say: There is a book in the bag.",
+              "answer": "가방 안에 책이 있어요."
+            },
+            {
+              "prompt": "Choose 와 or 과: 책__ 공책.",
+              "answer": "과, because 책 ends in a consonant."
+            },
+            {
+              "prompt": "Say: I do not have time.",
+              "answer": "시간이 없어요."
+            }
+          ],
+          "culture": "Many Korean homes have heated floors, so people often sit and sleep on the floor. Position words such as 위 and 아래 describe everyday comfort, not just geometry.",
+          "reference": [
+            "KGIU Beginning · existence with 있다/없다",
+            "KGIU Beginning · location particles",
+            "KGIU Beginning · joining nouns"
+          ],
+          "audioTracks": [57, 58, 59, 60, 61, 62, 63]
+        },
+        {
+          "id": "4-2",
+          "number": 2,
+          "title": "도서관에서 공부를 해요",
+          "englishTitle": "I study in the library",
+          "summary": "Action locations, before doing something, and short negation with 안.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Say where an action happens with 에서",
+            "Say before doing something with -기 전에",
+            "Negate a verb with 안"
+          ],
+          "vocabulary": [
+            { "korean": "도서관", "english": "library" },
+            { "korean": "공원", "english": "park" },
+            { "korean": "커피숍", "english": "coffee shop" },
+            { "korean": "식당", "english": "restaurant" },
+            { "korean": "운동하다", "english": "to exercise" },
+            { "korean": "읽다", "english": "to read" }
+          ],
+          "grammar": [
+            {
+              "id": "4-2-eseo",
+              "title": "Where an action happens",
+              "pattern": "place + 에서",
+              "explanation": "에서 marks the place where an action takes place. It is different from 에, which marks where something exists.",
+              "examples": [
+                { "korean": "도서관에서 공부해요.", "english": "I study in the library." },
+                { "korean": "공원에서 운동해요.", "english": "I exercise in the park." },
+                { "korean": "식당에서 밥을 먹어요.", "english": "I eat at a restaurant." }
+              ],
+              "tip": "If the verb is 있다/없다, use 에. For actions such as 공부하다 or 먹다, use 에서."
+            },
+            {
+              "id": "4-2-before",
+              "title": "Before doing",
+              "pattern": "verb + -기 전에",
+              "explanation": "-기 전에 means before doing something. The tense is carried by the second clause, not by the -기 form.",
+              "examples": [
+                { "korean": "밥을 먹기 전에 손을 씻어요.", "english": "I wash my hands before eating." },
+                { "korean": "수업이 끝나기 전에 도서관에 갔어요.", "english": "I went to the library before class ended." }
+              ],
+              "tip": "Do not add a past tense to the -기 clause: 먹었기 전에 is wrong."
+            },
+            {
+              "id": "4-2-an",
+              "title": "Short negation with 안",
+              "pattern": "안 + verb",
+              "explanation": "Put 안 before a verb or adjective to negate it in everyday speech. It has the same meaning as -지 않다 but is shorter.",
+              "examples": [
+                { "korean": "오늘은 운동을 안 해요.", "english": "I am not exercising today." },
+                { "korean": "커피를 안 마셔요.", "english": "I do not drink coffee." }
+              ],
+              "tip": "안 goes before the verb, not before the object: 커피를 안 마셔요 is correct."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "민호", "korean": "지금 어디에 있어요?", "english": "Where are you now?" },
+            { "speaker": "제인", "korean": "도서관에서 공부해요.", "english": "I am studying in the library." },
+            { "speaker": "민호", "korean": "공부하기 전에 뭐 했어요?", "english": "What did you do before studying?" },
+            { "speaker": "제인", "korean": "커피숍에서 친구를 만났어요.", "english": "I met a friend at a coffee shop." }
+          ],
+          "practice": [
+            {
+              "prompt": "Choose 에 or 에서: 도서관__ 공부해요.",
+              "answer": "에서, because 공부하다 is an action."
+            },
+            {
+              "prompt": "Say: I wash my hands before eating.",
+              "answer": "밥을 먹기 전에 손을 씻어요."
+            },
+            {
+              "prompt": "Negate with 안: 오늘은 운동을 해요.",
+              "answer": "오늘은 운동을 안 해요."
+            }
+          ],
+          "culture": "Korean libraries often mix quiet reading rooms with cafés and group study areas. 에서 tells a listener which kind of place you mean.",
+          "reference": [
+            "KGIU Beginning · location particle 에서",
+            "KGIU Beginning · before doing",
+            "KGIU Beginning · negation"
+          ],
+          "audioTracks": [64, 65, 66, 67, 68, 69]
+        },
+        {
+          "id": "4-3",
+          "number": 3,
+          "title": "오른쪽으로 가세요",
+          "englishTitle": "Go to the right",
+          "summary": "Ask for directions with movement verbs, direction particles, and polite requests.",
+          "topik": 1,
+          "minutes": 5,
+          "goals": [
+            "Say go to or come to a place",
+            "Give a direction with (으)로",
+            "Make a polite request with -(으)세요"
+          ],
+          "vocabulary": [
+            { "korean": "왼쪽", "english": "left" },
+            { "korean": "오른쪽", "english": "right" },
+            { "korean": "앞", "english": "front" },
+            { "korean": "뒤", "english": "behind, back" },
+            { "korean": "은행", "english": "bank" },
+            { "korean": "병원", "english": "hospital" }
+          ],
+          "grammar": [
+            {
+              "id": "4-3-go",
+              "title": "Go to and come to",
+              "pattern": "place + 에 가다 / 오다",
+              "explanation": "에 marks the destination of movement verbs such as 가다 (go) and 오다 (come).",
+              "examples": [
+                { "korean": "학교에 가요.", "english": "I go to school." },
+                { "korean": "집에 와요.", "english": "I come home." },
+                { "korean": "은행에 갔어요.", "english": "I went to the bank." }
+              ],
+              "tip": "The destination takes 에, not 에서."
+            },
+            {
+              "id": "4-3-direction",
+              "title": "Direction and method",
+              "pattern": "noun + (으)로",
+              "explanation": "(으)로 marks the direction of movement or the method used. Use 으로 after a consonant, 로 after a vowel, and 로 after ㄹ.",
+              "examples": [
+                { "korean": "오른쪽으로 가세요.", "english": "Please go to the right." },
+                { "korean": "버스로 가요.", "english": "I go by bus." },
+                { "korean": "이 길로 가세요.", "english": "Please go along this road." }
+              ],
+              "tip": "For a method, (으)로 is like by or with. For a direction, it is like toward."
+            },
+            {
+              "id": "4-3-request",
+              "title": "Polite request",
+              "pattern": "verb + -(으)세요",
+              "explanation": "Add -으세요 after a consonant stem and -세요 after a vowel stem to ask someone politely to do something. It is more polite than -아요/어요.",
+              "examples": [
+                { "korean": "앉으세요.", "english": "Please sit down." },
+                { "korean": "기다리세요.", "english": "Please wait." },
+                { "korean": "천천히 말하세요.", "english": "Please speak slowly." }
+              ],
+              "tip": "This ending is also used for polite statements about someone older, not only requests. Stems ending in ㄹ drop it before 세요: 만들다 → 만드세요."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "제인", "korean": "실례합니다. 은행이 어디예요?", "english": "Excuse me. Where is the bank?" },
+            { "speaker": "민호", "korean": "이 길로 쭉 가세요. 그리고 오른쪽으로 가세요.", "english": "Go straight along this road. Then go to the right." },
+            { "speaker": "제인", "korean": "병원도 가까워요?", "english": "Is the hospital close too?" },
+            { "speaker": "민호", "korean": "네, 은행 옆에 있어요.", "english": "Yes, it is next to the bank." }
+          ],
+          "practice": [
+            {
+              "prompt": "Say: I go to school.",
+              "answer": "학교에 가요."
+            },
+            {
+              "prompt": "Choose 으로 or 로: 오른쪽__ 가세요.",
+              "answer": "으로, because 오른쪽 ends in a consonant."
+            },
+            {
+              "prompt": "Make a polite request: 앉다.",
+              "answer": "앉으세요."
+            }
+          ],
+          "culture": "When asking for directions, use a landmark as well as a turn. 은행 옆 is often clearer than a street name, especially in dense neighborhoods.",
+          "reference": [
+            "KGIU Beginning · destination particle 에",
+            "KGIU Beginning · direction particle (으)로",
+            "KGIU Beginning · polite requests"
+          ],
+          "audioTracks": [70, 71, 72, 73, 74, 75]
+        }
+      ]
+    },
+    {
+      "id": "chapter-5",
+      "number": 5,
+      "title": "미래",
+      "englishTitle": "Future",
+      "summary": "Make plans, explain reasons, and talk about what you want to do.",
+      "culture": "Weekend and vacation plans are common conversation topics. Koreans often ask about a plan before suggesting a time or place.",
+      "lessons": [
+        {
+          "id": "5-1",
+          "number": 1,
+          "title": "산책을 할 거예요",
+          "englishTitle": "I will take a walk",
+          "summary": "Future plans, reasons with -아서/어서, and the ㅂ irregular.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Use the ㅂ irregular",
+            "Give a reason with -아서/어서",
+            "State a future plan with -(으)ㄹ 거예요"
+          ],
+          "vocabulary": [
+            { "korean": "산책", "english": "a walk" },
+            { "korean": "청소", "english": "cleaning" },
+            { "korean": "빨래", "english": "laundry" },
+            { "korean": "춥다", "english": "to be cold" },
+            { "korean": "덥다", "english": "to be hot" },
+            { "korean": "주말", "english": "weekend" }
+          ],
+          "grammar": [
+            {
+              "id": "5-1-irregular",
+              "title": "ㅂ irregular",
+              "pattern": "ㅂ → 우",
+              "explanation": "When a stem ends in ㅂ and the next ending begins with a vowel, ㅂ changes to 우. 돕다 and 곱다 are the exceptions and change to 오. 입다, 잡다, 씹다, and 좁다 stay regular.",
+              "examples": [
+                { "korean": "춥다 → 추워요", "english": "to be cold" },
+                { "korean": "덥다 → 더워요", "english": "to be hot" },
+                { "korean": "쉽다 → 쉬워요", "english": "to be easy" },
+                { "korean": "돕다 → 도와요", "english": "to help" }
+              ],
+              "tip": "The ㅂ does not disappear. It becomes 우 and joins the ending."
+            },
+            {
+              "id": "5-1-reason",
+              "title": "Reason with -아서/어서",
+              "pattern": "-아서 / -어서",
+              "explanation": "Attach -아서 after ㅏ or ㅗ and -어서 after other vowels to give a reason. 하다 verbs become 해서. The second clause is the result.",
+              "examples": [
+                { "korean": "비가 와서 집에 있었어요.", "english": "It rained, so I stayed home." },
+                { "korean": "피곤해서 일찍 잤어요.", "english": "I was tired, so I slept early." },
+                { "korean": "날씨가 좋아서 산책했어요.", "english": "The weather was good, so I took a walk." }
+              ],
+              "tip": "Do not use -아서/어서 with a command or suggestion in the second clause."
+            },
+            {
+              "id": "5-1-future",
+              "title": "Future plan",
+              "pattern": "verb + -(으)ㄹ 거예요",
+              "explanation": "Add -을 거예요 after a consonant stem and -ㄹ 거예요 after a vowel stem. It expresses a plan, intention, or prediction.",
+              "examples": [
+                { "korean": "산책을 할 거예요.", "english": "I will take a walk." },
+                { "korean": "영화를 볼 거예요.", "english": "I will watch a movie." },
+                { "korean": "집에서 쉴 거예요.", "english": "I will rest at home." }
+              ],
+              "tip": "This is a polite future form. The plain -겠습니다 is more formal and decisive."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "민호", "korean": "주말에 뭐 할 거예요?", "english": "What will you do on the weekend?" },
+            { "speaker": "제인", "korean": "날씨가 좋아서 산책을 할 거예요.", "english": "The weather will be good, so I will take a walk." },
+            { "speaker": "민호", "korean": "저는 방이 더러워서 청소를 할 거예요.", "english": "My room is dirty, so I will clean it." },
+            { "speaker": "제인", "korean": "청소를 한 후에 같이 커피숍에 갈 거예요?", "english": "After cleaning, will you go to a coffee shop together?" }
+          ],
+          "practice": [
+            {
+              "prompt": "Change to the polite present: 춥다.",
+              "answer": "추워요."
+            },
+            {
+              "prompt": "Give a reason: 비가 와요. + 집에 있었어요.",
+              "answer": "비가 와서 집에 있었어요."
+            },
+            {
+              "prompt": "Say: I will watch a movie.",
+              "answer": "영화를 볼 거예요."
+            }
+          ],
+          "culture": "Weekend plans often depend on weather and housework. 청소 and 빨래 are common Saturday tasks, so they appear often in casual conversation.",
+          "reference": [
+            "KGIU Beginning · ㅂ irregular verbs",
+            "KGIU Beginning · reason connectors",
+            "KGIU Beginning · future tense"
+          ],
+          "audioTracks": [76, 77, 78, 79, 80, 81, 82]
+        },
+        {
+          "id": "5-2",
+          "number": 2,
+          "title": "영화를 보려고 해요",
+          "englishTitle": "I am going to see a movie",
+          "summary": "Contrast with -지만, intentions with -(으)려고 해요, and the ㄷ irregular.",
+          "topik": 1,
+          "minutes": 5,
+          "goals": [
+            "Contrast two ideas with -지만",
+            "State an intention with -(으)려고 해요",
+            "Use the ㄷ irregular"
+          ],
+          "vocabulary": [
+            { "korean": "영화", "english": "movie" },
+            { "korean": "운동", "english": "exercise" },
+            { "korean": "배우다", "english": "to learn" },
+            { "korean": "듣다", "english": "to listen" },
+            { "korean": "걷다", "english": "to walk" },
+            { "korean": "계획", "english": "plan" }
+          ],
+          "grammar": [
+            {
+              "id": "5-2-but",
+              "title": "Contrast with -지만",
+              "pattern": "verb + -지만",
+              "explanation": "-지만 connects two clauses that contrast. The ending does not change for tense; the tense is shown on the verb before it.",
+              "examples": [
+                { "korean": "한국어는 어렵지만 재미있어요.", "english": "Korean is difficult but interesting." },
+                { "korean": "운동을 좋아하지만 자주 안 해요.", "english": "I like exercise but I do not do it often." }
+              ],
+              "tip": "-지만 is polite and neutral. It can also attach to past tense: 갔지만."
+            },
+            {
+              "id": "5-2-intend",
+              "title": "Intention",
+              "pattern": "verb + -(으)려고 해요",
+              "explanation": "Add -으려고 해요 after a consonant stem and -려고 해요 after a vowel stem to say what you intend or plan to do.",
+              "examples": [
+                { "korean": "영화를 보려고 해요.", "english": "I am going to see a movie." },
+                { "korean": "운동을 하려고 해요.", "english": "I am going to exercise." },
+                { "korean": "한국어를 배우려고 해요.", "english": "I am going to learn Korean." }
+              ],
+              "tip": "This focuses on the intention in your mind. -(으)ㄹ 거예요 can sound like a firmer plan. Stems ending in ㄹ drop the 으: 살다 → 살려고 해요."
+            },
+            {
+              "id": "5-2-irregular",
+              "title": "ㄷ irregular",
+              "pattern": "ㄷ → ㄹ",
+              "explanation": "When a stem ends in ㄷ and the next ending begins with a vowel, ㄷ changes to ㄹ. 닫다, 받다, and 믿다 are regular and keep ㄷ.",
+              "examples": [
+                { "korean": "듣다 → 들어요", "english": "to listen" },
+                { "korean": "걷다 → 걸어요", "english": "to walk" },
+                { "korean": "묻다 → 물어요", "english": "to ask" },
+                { "korean": "닫다 → 닫아요", "english": "to close, regular" }
+              ],
+              "tip": "Check the next ending: only a vowel-initial ending triggers the change."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "제인", "korean": "오늘 뭐 하려고 해요?", "english": "What are you going to do today?" },
+            { "speaker": "민호", "korean": "운동을 하려고 해요.", "english": "I am going to exercise." },
+            { "speaker": "제인", "korean": "저도 운동을 하려고 해요.", "english": "I am going to exercise too." },
+            { "speaker": "민호", "korean": "좋아요. 같이 해요.", "english": "Good. Let's do it together." }
+          ],
+          "practice": [
+            {
+              "prompt": "Contrast: 한국어는 어려워요. + 재미있어요.",
+              "answer": "한국어는 어렵지만 재미있어요."
+            },
+            {
+              "prompt": "Say: I am going to see a movie.",
+              "answer": "영화를 보려고 해요."
+            },
+            {
+              "prompt": "Change to polite present: 듣다.",
+              "answer": "들어요."
+            }
+          ],
+          "culture": "Koreans often state an intention before inviting someone. 같이 해요 after a plan is a friendly, low-pressure way to include the listener.",
+          "reference": [
+            "KGIU Beginning · contrast connectors",
+            "KGIU Beginning · intention",
+            "KGIU Beginning · ㄷ irregular verbs"
+          ],
+          "audioTracks": [83, 84, 85, 86, 87, 88]
+        },
+        {
+          "id": "5-3",
+          "number": 3,
+          "title": "여행을 가고 싶어요",
+          "englishTitle": "I want to go traveling",
+          "summary": "Talk about duration, conditions, and wishes.",
+          "topik": 1,
+          "minutes": 4,
+          "goals": [
+            "Say during or while with 동안",
+            "Make a condition with -(으)면",
+            "Express a wish with -고 싶다"
+          ],
+          "vocabulary": [
+            { "korean": "여행", "english": "travel" },
+            { "korean": "방학", "english": "school vacation" },
+            { "korean": "부산", "english": "Busan" },
+            { "korean": "바다", "english": "sea" },
+            { "korean": "사다", "english": "to buy" },
+            { "korean": "쉬다", "english": "to rest" }
+          ],
+          "grammar": [
+            {
+              "id": "5-3-during",
+              "title": "During and while",
+              "pattern": "noun + 동안 · verb + -는 동안",
+              "explanation": "동안 means during a period. After a verb stem, -는 동안 means while doing something. The subjects of the two clauses can be the same or different.",
+              "examples": [
+                { "korean": "방학 동안 여행을 할 거예요.", "english": "I will travel during the vacation." },
+                { "korean": "기다리는 동안 책을 읽었어요.", "english": "I read a book while waiting." }
+              ],
+              "tip": "Use 동안 after a noun and -는 동안 after a verb."
+            },
+            {
+              "id": "5-3-if",
+              "title": "If and when",
+              "pattern": "verb + -(으)면",
+              "explanation": "Add -으면 after a consonant stem and -면 after a vowel stem. It marks a condition or a general when.",
+              "examples": [
+                { "korean": "시간이 있으면 여행을 갈 거예요.", "english": "If I have time, I will travel." },
+                { "korean": "비가 오면 집에 있을 거예요.", "english": "If it rains, I will stay home." },
+                { "korean": "피곤하면 좀 쉬세요.", "english": "If you are tired, rest a little." }
+              ],
+              "tip": "The condition comes first. The result comes second. Stems ending in ㄹ drop the 으: 만들다 → 만들면."
+            },
+            {
+              "id": "5-3-want",
+              "title": "Wanting to do",
+              "pattern": "verb + -고 싶다",
+              "explanation": "Add -고 싶다 to a verb stem to say I want to do it. For a third person, use -고 싶어하다.",
+              "examples": [
+                { "korean": "부산에 가고 싶어요.", "english": "I want to go to Busan." },
+                { "korean": "바다를 보고 싶어요.", "english": "I want to see the sea." },
+                { "korean": "동생은 여행을 가고 싶어해요.", "english": "My younger sibling wants to travel." }
+              ],
+              "tip": "The subject of -고 싶다 is normally the speaker, so it is usually I."
+            }
+          ],
+          "dialogue": [
+            { "speaker": "제인", "korean": "방학 동안 뭐 할 거예요?", "english": "What will you do during the vacation?" },
+            { "speaker": "민호", "korean": "부산에 여행을 가고 싶어요.", "english": "I want to travel to Busan." },
+            { "speaker": "제인", "korean": "부산에서 뭐 하고 싶어요?", "english": "What do you want to do in Busan?" },
+            { "speaker": "민호", "korean": "바다를 보고 맛있는 음식을 먹고 싶어요.", "english": "I want to see the sea and eat good food." }
+          ],
+          "practice": [
+            {
+              "prompt": "Say: I will travel during the vacation.",
+              "answer": "방학 동안 여행을 할 거예요."
+            },
+            {
+              "prompt": "Make a condition: 시간이 있어요. + 여행을 갈 거예요.",
+              "answer": "시간이 있으면 여행을 갈 거예요."
+            },
+            {
+              "prompt": "Say: I want to go to Busan.",
+              "answer": "부산에 가고 싶어요."
+            }
+          ],
+          "culture": "Busan is a popular vacation choice for its beaches, markets, and slower pace. Summer train tickets sell out early, so plans are often made weeks ahead.",
+          "reference": [
+            "KGIU Beginning · duration and while",
+            "KGIU Beginning · conditional -(으)면",
+            "KGIU Beginning · expressing wants"
+          ],
+          "audioTracks": [89, 90, 91, 92, 93, 94]
+        }
+      ]
+    }
+  ]
+}

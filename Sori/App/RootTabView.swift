@@ -59,6 +59,9 @@ struct RootTabView: View {
                 await env.prepareLibrary()
             }
             .task {
+                await env.prepareCurriculum()
+            }
+            .task {
                 await splash.handleBecameActive(
                     settings: env.settings,
                     database: env.database
