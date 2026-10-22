@@ -164,4 +164,107 @@ final class PracticeRepositoryTests: XCTestCase {
         XCTAssertEqual(sessions[0].startedAt, base.addingTimeInterval(120))
         XCTAssertEqual(sessions[1].startedAt, base.addingTimeInterval(60))
     }
+
+    func testCPMSamplesAreOrderedAndCanBeFilteredByDate() async throws {
+        let base = Date(timeIntervalSince1970: 1_800_000_000)
+
+        _ = try await practice.saveReadingSession(
+            ReadingSessionInput(
+                startedAt: base,
+                endedAt: base.addingTimeInterval(60),
+                durationSeconds: 60,
+                plannedSeconds: 60,
+                completedCharacters: 10,
+                completedSentences: 1,
+                cpm: 10,
+                fontSize: 30
+            ),
+            exposedSentenceIDs: []
+        )
+        _ = try await practice.saveTypingSession(
+            TypingSessionInput(
+                startedAt: base.addingTimeInterval(60),
+                endedAt: base.addingTimeInterval(120),
+                durationSeconds: 60,
+                plannedSeconds: 60,
+                typedCharacters: 15,
+                correctCharacters: 15,
+                errorCharacters: 0,
+                completedSentences: 1,
+                cpmNet: 15,
+                cpmGross: 15,
+                accuracy: 1,
+                fontSize: 24,
+                keyboardMode: "builtIn"
+            ),
+            exposedSentenceIDs: []
+        )
+        _ = try await practice.saveReadingSession(
+            ReadingSessionInput(
+                startedAt: base.addingTimeInterval(120),
+                endedAt: base.addingTimeInterval(180),
+                durationSeconds: 60,
+                plannedSeconds: 60,
+                completedCharacters: 20,
+                completedSentences: 1,
+                cpm: 20,
+                fontSize: 30
+            ),
+            exposedSentenceIDs: []
+        )
+
+        let all = try await practice.cpmSamples()
+        XCTAssertEqual(all.count, 3)
+        XCTAssertEqual(all.map(\.cpm), [10, 15, 20])
+        XCTAssertEqual(all[0].skill, .reading)
+        XCTAssertEqual(all[1].skill, .typing)
+        XCTAssertEqual(all[2].skill, .reading)
+
+        let recent = try await practice.cpmSamples(
+            since: base.addingTimeInterval(30)
+        )
+        XCTAssertEqual(recent.count, 2)
+        XCTAssertEqual(recent.map(\.cpm), [15, 20])
+    }
+
+    func testDeleteSessionRemovesOnlyTheSelectedSession() async throws {
+        let base = Date(timeIntervalSince1970: 1_800_000_000)
+        let readingID = try await practice.saveReadingSession(
+            ReadingSessionInput(
+                startedAt: base,
+                endedAt: base.addingTimeInterval(60),
+                durationSeconds: 60,
+                plannedSeconds: 60,
+                completedCharacters: 10,
+                completedSentences: 1,
+                cpm: 10,
+                fontSize: 30
+            ),
+            exposedSentenceIDs: []
+        )
+        let typingID = try await practice.saveTypingSession(
+            TypingSessionInput(
+                startedAt: base.addingTimeInterval(60),
+                endedAt: base.addingTimeInterval(120),
+                durationSeconds: 60,
+                plannedSeconds: 60,
+                typedCharacters: 12,
+                correctCharacters: 12,
+                errorCharacters: 0,
+                completedSentences: 1,
+                cpmNet: 12,
+                cpmGross: 12,
+                accuracy: 1,
+                fontSize: 24,
+                keyboardMode: "builtIn"
+            ),
+            exposedSentenceIDs: []
+        )
+
+        try await practice.deleteSession(id: readingID)
+
+        let sessions = try await practice.recentSessions(limit: 10)
+        XCTAssertEqual(sessions.count, 1)
+        XCTAssertEqual(sessions[0].id, typingID)
+    }
 }

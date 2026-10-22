@@ -14,7 +14,7 @@ explicitly download a library pack or a subtitle file.
 
 ## Status
 
-Milestone 6 — FSRS spaced repetition for grammar and vocabulary. Complete.
+Milestone 7 — Progress charts, session management, and time tracking. Complete.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
@@ -25,7 +25,7 @@ Milestone 6 — FSRS spaced repetition for grammar and vocabulary. Complete.
 | M4 | Speak tab + TTS | Complete |
 | M5 | Vitamin Korean 1 curriculum + textbook audio | Complete |
 | M6 | FSRS review for grammar and vocabulary | Complete |
-| M7 | Progress charts, session management, time tracking | Planned |
+| M7 | Progress charts, session management, time tracking | Complete |
 | M8 | SideStore IPA, backup/restore, polish | Planned |
 
 ## Requirements
@@ -213,6 +213,19 @@ Imported audio is excluded from iCloud backup and never enters the library, the
 public repository, or a Release build. Delete individual tracks by swiping, or clear
 the whole folder from Personal audio. The original files in Files or iCloud are not
 affected.
+
+## Progress
+
+The Progress tab combines reading and typing net CPM on one chart. Choose 1M, 3M,
+6M, 1Y, or All, and switch between daily and weekly means. Each point is the mean of
+saved sessions in that day or week; manual End sessions are never saved. The latest
+100 sessions are listed newest first and can be filtered by skill. Deleting a session
+is permanent and updates the best CPM, chart, and session list immediately.
+
+Time spent is recorded as active foreground intervals per top-level tab and shown as
+all-time totals. Review time is counted in Learn. Intervals are written when you
+change tabs or leave the app; intervals under one second are discarded. Progress has
+no network access and nothing is uploaded.
 
 ## Personal content
 

@@ -117,4 +117,51 @@ struct PracticeRepository: Sendable {
             }
         }
     }
+
+    func cpmSamples(since: Date? = nil) async throws -> [CPMSessionSample] {
+        try await database.dbQueue.read { db in
+            let rows: [Row]
+            if let since {
+                rows = try Row.fetchAll(
+                    db,
+                    sql: """
+                        SELECT startedAt, skill, cpmNet
+                          FROM practiceSession
+                         WHERE startedAt >= ?
+                         ORDER BY startedAt ASC, id ASC
+                        """,
+                    arguments: [since]
+                )
+            } else {
+                rows = try Row.fetchAll(
+                    db,
+                    sql: """
+                        SELECT startedAt, skill, cpmNet
+                          FROM practiceSession
+                         ORDER BY startedAt ASC, id ASC
+                        """
+                )
+            }
+
+            return rows.compactMap { row in
+                guard let skill = PracticeSkill(rawValue: row["skill"]) else {
+                    return nil
+                }
+                return CPMSessionSample(
+                    startedAt: row["startedAt"],
+                    skill: skill,
+                    cpm: row["cpmNet"]
+                )
+            }
+        }
+    }
+
+    func deleteSession(id: Int64) async throws {
+        try await database.dbQueue.write { db in
+            try db.execute(
+                sql: "DELETE FROM practiceSession WHERE id = ?",
+                arguments: [id]
+            )
+        }
+    }
 }

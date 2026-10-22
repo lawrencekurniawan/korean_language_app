@@ -68,7 +68,20 @@ struct RootTabView: View {
                     database: env.database
                 )
             }
+            .onAppear {
+                env.usage.start(tab: selection)
+            }
+            .onChange(of: selection) { _, tab in
+                guard scenePhase == .active else { return }
+                env.usage.start(tab: tab)
+            }
             .onChange(of: scenePhase) { _, phase in
+                if phase == .active {
+                    env.usage.start(tab: selection)
+                } else {
+                    env.usage.stop()
+                }
+
                 guard phase == .active else { return }
                 Task {
                     await splash.handleBecameActive(

@@ -12,6 +12,7 @@ final class AppEnvironment {
     let curriculum: CurriculumStore
     let personalAudio: PersonalAudioStore
     let review: ReviewStore
+    let usage: UsageTracker
     let startupError: String?
 
     var libraryStatus: LibraryStatus = .unknown
@@ -29,6 +30,7 @@ final class AppEnvironment {
         self.curriculum = CurriculumStore(database: database)
         self.personalAudio = PersonalAudioStore()
         self.review = ReviewStore(database: database)
+        self.usage = UsageTracker(repository: UsageRepository(database: database))
     }
 
     var isSeedingLibrary: Bool {
