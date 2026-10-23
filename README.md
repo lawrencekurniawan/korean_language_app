@@ -14,7 +14,7 @@ explicitly download a library pack or a subtitle file.
 
 ## Status
 
-Milestone 7 — Progress charts, session management, and time tracking. Complete.
+Milestone 8 — Backups, SideStore packaging, and polish. Complete.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
@@ -26,7 +26,7 @@ Milestone 7 — Progress charts, session management, and time tracking. Complete
 | M5 | Vitamin Korean 1 curriculum + textbook audio | Complete |
 | M6 | FSRS review for grammar and vocabulary | Complete |
 | M7 | Progress charts, session management, time tracking | Complete |
-| M8 | SideStore IPA, backup/restore, polish | Planned |
+| M8 | SideStore IPA, backup/restore, polish | Complete |
 
 ## Requirements
 
@@ -51,15 +51,27 @@ xcodebuild -scheme Sori \
   test
 ```
 
+Build an unsigned Release IPA for SideStore:
+
+```sh
+./scripts/build-ipa.sh
+# build/Sori.ipa
+```
+
+The script uses `CODE_SIGNING_ALLOWED=NO` and packages `Payload/Sori.app` without an
+embedded provisioning profile. The bundle ID is stable at
+`com.lawrencekurniawan.sori`, and the app declares no paid entitlements. SideStore
+signs the IPA with your own Apple ID.
+
 ## Project structure
 
 ```
 Sori/
   App/            App entry point, environment, tab shell, splash coordination
   DesignSystem/   Colours, typography, cards, buttons
-  Domain/         Settings, value models, corpus segmentation and filtering
+  Domain/         Settings, backups, value models, corpus segmentation and filtering
   Data/           SQLite (GRDB), repositories, importers, network clients
-  Features/       Learn, Practice, Speak, Progress, Settings, Library, Splash
+  Features/       Learn, Practice, Speak, Progress, Settings, backups, Library, Splash
   Resources/      Assets, localisation catalogue, starter library JSON
 SoriTests/        Unit and importer tests
 scripts/          Seed-library generation and packaging scripts
@@ -226,6 +238,23 @@ Time spent is recorded as active foreground intervals per top-level tab and show
 all-time totals. Review time is counted in Learn. Intervals are written when you
 change tabs or leave the app; intervals under one second are discarded. Progress has
 no network access and nothing is uploaded.
+
+## Backup and restore
+
+Sori creates one local backup per calendar day after launch. It keeps the seven newest
+daily backups and four newest weekly backups in Sori's private Application Support
+directory. That backup directory is excluded from iCloud device backup, and Sori never
+uploads anything on its own.
+
+Each `.sori-backup` file is an unencrypted ZIP archive containing `manifest.json`,
+`sori.sqlite`, `settings.json`, and `README.txt`. The database holds progress, practice
+sessions, review scheduling, library imports, and usage time. Settings contains only
+preferences. Keychain credentials and personal textbook audio are excluded.
+
+Open Settings → Backups to create a backup, export the latest copy through the iOS
+share sheet to iCloud Drive, Google Drive, or another file provider, or restore from a
+file. Restoring replaces the database and settings; personal audio and Keychain keys
+stay on the device.
 
 ## Personal content
 

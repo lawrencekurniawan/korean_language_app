@@ -5,9 +5,11 @@ import GRDB
 /// practice library, so charts and corpus queries can share a connection.
 final class AppDatabase: Sendable {
     let dbQueue: DatabaseQueue
+    let fileURL: URL?
 
-    init(dbQueue: DatabaseQueue) throws {
+    init(dbQueue: DatabaseQueue, fileURL: URL? = nil) throws {
         self.dbQueue = dbQueue
+        self.fileURL = fileURL
         try Self.migrator.migrate(dbQueue)
     }
 
@@ -24,6 +26,17 @@ final class AppDatabase: Sendable {
         let directory = base.appendingPathComponent("Sori", isDirectory: true)
         try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
 
+        let fileURL = directory.appendingPathComponent("sori.sqlite")
+        return try onDisk(at: fileURL)
+    }
+
+    static func onDisk(at fileURL: URL) throws -> AppDatabase {
+        let fileManager = FileManager.default
+        try fileManager.createDirectory(
+            at: fileURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+
         var configuration = Configuration()
         configuration.foreignKeysEnabled = true
         configuration.prepareDatabase { db in
@@ -32,10 +45,10 @@ final class AppDatabase: Sendable {
         }
 
         let queue = try DatabaseQueue(
-            path: directory.appendingPathComponent("sori.sqlite").path,
+            path: fileURL.path,
             configuration: configuration
         )
-        return try AppDatabase(dbQueue: queue)
+        return try AppDatabase(dbQueue: queue, fileURL: fileURL)
     }
 
     static func inMemory() throws -> AppDatabase {

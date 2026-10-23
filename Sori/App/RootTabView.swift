@@ -56,11 +56,7 @@ struct RootTabView: View {
             }
             .animation(.easeInOut(duration: 0.22), value: splash.isPresented)
             .task {
-                await env.prepareLibrary()
-            }
-            .task {
-                await env.prepareCurriculum()
-                await env.prepareReview()
+                await env.prepareAtLaunch()
             }
             .task {
                 await splash.handleBecameActive(
@@ -89,6 +85,7 @@ struct RootTabView: View {
                         database: env.database
                     )
                     await env.prepareReview()
+                    await env.backup.automaticBackupIfNeeded()
                 }
             }
     }
@@ -103,6 +100,10 @@ struct RootTabView: View {
         } else if ProcessInfo.processInfo.arguments.contains("--sources") {
             NavigationStack {
                 SourcesSettingsView()
+            }
+        } else if ProcessInfo.processInfo.arguments.contains("--backups") {
+            NavigationStack {
+                BackupsView()
             }
         } else {
             tabs

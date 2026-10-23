@@ -28,6 +28,7 @@ LocalContent/
 *.mp3
 *.m4a
 *.zip
+*.sori-backup
 
 # Local secrets
 Secrets.xcconfig

@@ -13,6 +13,7 @@ final class AppEnvironment {
     let personalAudio: PersonalAudioStore
     let review: ReviewStore
     let usage: UsageTracker
+    let backup: BackupService
     let startupError: String?
 
     var libraryStatus: LibraryStatus = .unknown
@@ -31,6 +32,7 @@ final class AppEnvironment {
         self.personalAudio = PersonalAudioStore()
         self.review = ReviewStore(database: database)
         self.usage = UsageTracker(repository: UsageRepository(database: database))
+        self.backup = BackupService(database: database, settings: settings)
     }
 
     var isSeedingLibrary: Bool {
@@ -76,6 +78,22 @@ final class AppEnvironment {
 
     func libraryDidChange() async {
         await refreshLibrary()
+    }
+
+    func prepareAtLaunch() async {
+        await prepareLibrary()
+        await prepareCurriculum()
+        await prepareReview()
+        await backup.automaticBackupIfNeeded()
+    }
+
+    func afterRestore() async {
+        usage.restartCurrentInterval()
+        libraryStatus = .unknown
+        librarySummary = nil
+        await prepareLibrary()
+        await prepareCurriculum()
+        await prepareReview()
     }
 
     func prepareCurriculum() async {

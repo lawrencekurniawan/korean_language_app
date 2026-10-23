@@ -160,6 +160,46 @@ final class SettingsStore {
         lastBackupAt = defaults.object(forKey: Keys.lastBackupAt) as? Date
     }
 
+    func snapshot() -> SettingsSnapshot {
+        SettingsSnapshot(
+            appearance: appearance.rawValue,
+            readingDuration: readingDuration,
+            typingDuration: typingDuration,
+            readingFontSize: readingFontSize,
+            typingFontSize: typingFontSize,
+            speakFontSize: speakFontSize,
+            appLanguage: appLanguage.rawValue,
+            explanationLanguage: explanationLanguage.rawValue,
+            splashEnabled: splashEnabled,
+            splashAutoCloseSeconds: splashAutoCloseSeconds,
+            keyboardMode: keyboardMode.rawValue,
+            speakAutoMode: speakAutoMode,
+            voiceIdentifier: voiceIdentifier,
+            speechRate: speechRate,
+            repeatCount: repeatCount
+        )
+    }
+
+    func apply(_ snapshot: SettingsSnapshot) {
+        appearance = AppAppearance(rawValue: snapshot.appearance) ?? .system
+        readingDuration = Self.clamp(snapshot.readingDuration, to: 15...300)
+        typingDuration = Self.clamp(snapshot.typingDuration, to: 15...300)
+        readingFontSize = Self.clamp(snapshot.readingFontSize, to: 18...44)
+        typingFontSize = Self.clamp(snapshot.typingFontSize, to: 18...44)
+        speakFontSize = Self.clamp(snapshot.speakFontSize, to: 18...44)
+        appLanguage = AppLanguage(rawValue: snapshot.appLanguage) ?? .english
+        explanationLanguage = ExplanationLanguage(
+            rawValue: snapshot.explanationLanguage
+        ) ?? .english
+        splashEnabled = snapshot.splashEnabled
+        splashAutoCloseSeconds = Self.clamp(snapshot.splashAutoCloseSeconds, to: 0...15)
+        keyboardMode = KeyboardMode(rawValue: snapshot.keyboardMode) ?? .builtIn
+        speakAutoMode = snapshot.speakAutoMode
+        voiceIdentifier = snapshot.voiceIdentifier
+        speechRate = Self.clamp(snapshot.speechRate, to: 0.3...0.8)
+        repeatCount = Self.clamp(snapshot.repeatCount, to: 0...5)
+    }
+
     func resetToDefaults() {
         appearance = .system
         readingDuration = 60
@@ -176,6 +216,13 @@ final class SettingsStore {
         voiceIdentifier = ""
         speechRate = 0.5
         repeatCount = 1
+    }
+
+    private static func clamp<T: Comparable>(
+        _ value: T,
+        to range: ClosedRange<T>
+    ) -> T {
+        min(max(value, range.lowerBound), range.upperBound)
     }
 
     private static func int(

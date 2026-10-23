@@ -31,6 +31,13 @@ final class UsageTracker {
         currentTab = nil
     }
 
+    /// Discards the in-progress interval without writing it. Used after replacing
+    /// the database so pre-restore time is not recorded in the restored history.
+    func restartCurrentInterval(at now: Date = Date()) {
+        guard currentTab != nil else { return }
+        startedAt = now
+    }
+
     func timeByTab() async -> [TabUsage] {
         (try? await repository.timeByTab()) ?? []
     }

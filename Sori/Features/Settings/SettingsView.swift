@@ -110,7 +110,11 @@ struct SettingsView: View {
                     } label: {
                         LabeledContent("Personal audio", value: personalAudioValue)
                     }
-                    LabeledContent("Backup", value: "Not configured")
+                    NavigationLink {
+                        BackupsView()
+                    } label: {
+                        LabeledContent("Backups", value: backupValue)
+                    }
                     LabeledContent(
                         "Last backup",
                         value: settings.lastBackupAt.map(formatDate) ?? "Never"
@@ -118,7 +122,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Library & backup")
                 } footer: {
-                    Text("Sori keeps a local copy of real Korean reading material. Backup and restore arrive in M8.")
+                    Text("Automatic local backups keep 7 daily and 4 weekly copies. Backups are unencrypted and exclude Keychain keys and personal audio. Export a copy to iCloud Drive or Google Drive from Backups.")
                 }
 
                 Section {
@@ -203,8 +207,14 @@ struct SettingsView: View {
         return "\(count) track\(count == 1 ? "" : "s")"
     }
 
+    private var backupValue: String {
+        let count = env.backup.dailyBackups.count
+        guard count > 0 else { return "Automatic" }
+        return "\(count) daily"
+    }
+
     private var appVersion: String {
-        (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "0.4.0"
+        (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "0.5.0"
     }
 }
 
