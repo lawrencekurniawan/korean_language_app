@@ -230,9 +230,10 @@ that the book was copied. The curriculum is an original English-first rewrite.
 - **Core grammar:** 35/36 VK1 target grammar points have a dedicated matching-unit
   card. The one exception is `-(으)세요①` (honorific polite, VK1 2-3); the request form
   `-(으)세요②` is covered in 4-3. Strict one-to-one card coverage is therefore ~97%.
-- **Core unit vocabulary:** using 199 discrete items from the textbook's unit vocabulary
-  boxes (excluding number/date tables and reading-passage words), **189 (95%)** are
-  explicit Sori vocabulary entries and **195 (98%)** appear somewhere in lesson content.
+- **Core unit vocabulary:** using a 199-item core list assembled from the unit
+  vocabulary boxes (excluding the full number/date paradigms and reading-passage words),
+  **189 (95%)** are explicit Sori vocabulary entries and **195 (98%)** appear somewhere
+  in lesson content.
   The few gaps include `언제`, `내일`, `밑`, and `한국 사람` as a standalone entry.
 - **Full textbook index:** about 500 headwords including numbers, place names, and
   reading words. Roughly **75% appear somewhere** in Sori and roughly **50% are explicit
