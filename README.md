@@ -190,11 +190,11 @@ chooses a neural voice and works entirely offline. Previous installs that had
 selected Apple's Yuna voice migrate to Automatic automatically.
 
 The first phrase loads the CoreML stages and may take a moment; later phrases use
-a local WAV cache. Text longer than the Korean chunk limit (57 characters) and
-unexpected model errors fall back to the best installed Apple Korean voice, so
-playback never silently disappears. Apple Premium or Enhanced voices can be
-installed in iOS Settings → Accessibility → Spoken Content → Voices → Korean and
-selected explicitly if preferred.
+a local WAV cache. Long text is split into short chunks and synthesized in
+sequence; unexpected model errors fall back to the best installed Apple Korean
+voice, so playback never silently disappears. Apple Premium or Enhanced voices
+can be installed in iOS Settings → Accessibility → Spoken Content → Voices →
+Korean and selected explicitly if preferred.
 
 Speak never writes practice sessions, exposure records, or analytics. Nothing is
 uploaded, and no audio is recorded.

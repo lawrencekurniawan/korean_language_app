@@ -5,10 +5,10 @@ import Foundation
 ///
 /// The chunker splits by paragraphs first, then by sentences (abbreviation-
 /// aware), then by commas, and finally falls back to whitespace boundaries
-/// so individual chunks never exceed the configured `maxLen`. The default
-/// cap is 110 characters for Latin-script input and 90 characters for CJK
-/// (Korean / Japanese), matching `Supertonic3Constants.maxChunkLengthLatin`
-/// / `maxChunkLengthCJK` (sized to fit the fixed `textTFixed = 128` window
+/// so individual chunks never exceed the configured `maxLen`. The app uses
+/// 70 characters for Latin-script input and 57 for CJK (Korean / Japanese),
+/// matching `Supertonic3Constants.maxChunkLengthLatin` /
+/// `maxChunkLengthCJK` (sized to fit the fixed `textTFixed = 128` window
 /// after NFKD expansion and `<lang>…</lang>` wrapping).
 enum Supertonic3TextChunker {
 
