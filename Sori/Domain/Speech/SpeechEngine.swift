@@ -4,6 +4,7 @@ enum SpeechVoiceQuality: Int, Sendable, Comparable {
     case standard
     case enhanced
     case premium
+    case neural
 
     static func < (lhs: SpeechVoiceQuality, rhs: SpeechVoiceQuality) -> Bool {
         lhs.rawValue < rhs.rawValue
@@ -14,6 +15,7 @@ enum SpeechVoiceQuality: Int, Sendable, Comparable {
         case .standard: "Standard"
         case .enhanced: "Enhanced"
         case .premium: "Premium"
+        case .neural: "Neural"
         }
     }
 }
@@ -33,9 +35,10 @@ struct SpeechVoice: Identifiable, Sendable, Equatable {
             || id.localizedCaseInsensitiveContains("Yuna")
     }
 
-    /// Picks the best voice installed on this device. Quality wins first, so a
-    /// downloaded Enhanced or Premium voice is never passed over for a Standard
-    /// one; Yuna breaks ties, then the name keeps the choice stable.
+    /// Picks the best voice installed on this device. Quality wins first, so the
+    /// bundled neural voice is preferred, then a downloaded Premium or Enhanced
+    /// Apple voice. Yuna is deliberately pushed down on ties because the
+    /// standard Yuna voice is the least natural Korean option on most devices.
     static func best(in voices: [SpeechVoice]) -> SpeechVoice? {
         voices.sorted(by: isOrderedBefore).first
     }
@@ -45,7 +48,7 @@ struct SpeechVoice: Identifiable, Sendable, Equatable {
             return lhs.quality > rhs.quality
         }
         if lhs.isYuna != rhs.isYuna {
-            return lhs.isYuna
+            return !lhs.isYuna
         }
         return lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
     }
@@ -63,4 +66,9 @@ protocol SpeechEngine: AnyObject {
         completion: @escaping @MainActor (Bool) -> Void
     ) -> Bool
     func stop()
+    func prewarm() async
+}
+
+extension SpeechEngine {
+    func prewarm() async {}
 }

@@ -10,7 +10,7 @@ final class CurriculumTests: XCTestCase {
     func testBundledCurriculumHasFiveChaptersAndFifteenLessons() throws {
         let curriculum = try loadCurriculum()
 
-        XCTAssertEqual(curriculum.curriculumVersion, "1.0.0")
+        XCTAssertEqual(curriculum.curriculumVersion, "1.1.0")
         XCTAssertEqual(curriculum.spine, "Vitamin Korean 1")
         XCTAssertEqual(curriculum.chapters.count, 5)
         XCTAssertEqual(curriculum.lessons.count, 15)
@@ -33,15 +33,20 @@ final class CurriculumTests: XCTestCase {
         let curriculum = try loadCurriculum()
 
         for lesson in curriculum.lessons {
-            XCTAssertTrue((3...5).contains(lesson.minutes), "\(lesson.id) minutes")
+            XCTAssertTrue((15...30).contains(lesson.minutes), "\(lesson.id) minutes")
             XCTAssertEqual(lesson.topik, 1, "\(lesson.id) TOPIK")
-            XCTAssertTrue((3...4).contains(lesson.goals.count), "\(lesson.id) goals")
-            XCTAssertEqual(lesson.vocabulary.count, 6, "\(lesson.id) vocabulary")
-            XCTAssertEqual(lesson.grammar.count, 3, "\(lesson.id) grammar")
-            XCTAssertEqual(lesson.practice.count, 3, "\(lesson.id) practice")
+            XCTAssertTrue((5...6).contains(lesson.goals.count), "\(lesson.id) goals")
+            XCTAssertTrue(lesson.vocabulary.count >= 16, "\(lesson.id) vocabulary")
+            XCTAssertTrue(lesson.grammar.count >= 4, "\(lesson.id) grammar")
+            XCTAssertEqual(lesson.practice.count, 8, "\(lesson.id) practice")
+            XCTAssertTrue(lesson.pronunciation.count >= 6, "\(lesson.id) pronunciation")
+            XCTAssertEqual(Set(lesson.vocabulary.map(\.korean)).count, lesson.vocabulary.count,
+                           "\(lesson.id) duplicate vocabulary")
             XCTAssertFalse(lesson.summary.isEmpty, "\(lesson.id) summary")
             XCTAssertFalse(lesson.culture.isEmpty, "\(lesson.id) culture")
             XCTAssertFalse(lesson.reference.isEmpty, "\(lesson.id) reference")
+            XCTAssertTrue(lesson.reference[0].hasPrefix("Vitamin Korean 1"),
+                          "\(lesson.id) should put VK1 first")
             XCTAssertFalse(lesson.audioTracks.isEmpty, "\(lesson.id) audio")
 
             for point in lesson.grammar {
@@ -51,6 +56,33 @@ final class CurriculumTests: XCTestCase {
                 XCTAssertFalse(point.examples.isEmpty)
                 XCTAssertFalse(point.tip.isEmpty)
             }
+
+            let kinds = Set(lesson.practice.map(\.kind))
+            XCTAssertEqual(kinds, Set(CurriculumExerciseKind.allCases),
+                           "\(lesson.id) exercise kinds")
+            XCTAssertEqual(Set(lesson.practice.map(\.id)).count, lesson.practice.count,
+                           "\(lesson.id) duplicate exercise ids")
+            for exercise in lesson.practice {
+                XCTAssertFalse(exercise.prompt.isEmpty, "\(lesson.id) prompt")
+                XCTAssertFalse(exercise.answer.isEmpty, "\(lesson.id) answer")
+                if exercise.kind == .fillBlank {
+                    XCTAssertTrue(exercise.prompt.contains("____"),
+                                  "\(exercise.id) fill blank marker")
+                }
+            }
+        }
+    }
+
+    func testTypedExercisesCoverEverySkillInEveryLesson() throws {
+        let curriculum = try loadCurriculum()
+
+        for lesson in curriculum.lessons {
+            let counts = Dictionary(grouping: lesson.practice, by: \.kind)
+                .mapValues(\.count)
+            XCTAssertGreaterThanOrEqual(counts[.fillBlank] ?? 0, 2, lesson.id)
+            XCTAssertGreaterThanOrEqual(counts[.translateToKorean] ?? 0, 2, lesson.id)
+            XCTAssertGreaterThanOrEqual(counts[.translateToEnglish] ?? 0, 2, lesson.id)
+            XCTAssertGreaterThanOrEqual(counts[.openResponse] ?? 0, 2, lesson.id)
         }
     }
 

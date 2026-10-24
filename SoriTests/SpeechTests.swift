@@ -153,7 +153,7 @@ final class SpeakPlayerTests: XCTestCase {
         XCTAssertTrue(player.hasEnhancedVoice)
     }
 
-    func testResolvedVoicePrefersYunaOnQualityTie() {
+    func testResolvedVoiceAvoidsYunaOnQualityTie() {
         let engine = MockSpeechEngine()
         engine.voices = [
             SpeechVoice(id: "other", name: "Minsu", language: "ko-KR", quality: .enhanced),
@@ -161,7 +161,19 @@ final class SpeakPlayerTests: XCTestCase {
         ]
         let player = SpeakPlayer(engine: engine)
 
-        XCTAssertEqual(player.resolvedVoice(for: nil)?.id, "yuna")
+        XCTAssertEqual(player.resolvedVoice(for: nil)?.id, "other")
+    }
+
+    func testResolvedVoicePrefersBundledNeuralVoice() {
+        let engine = MockSpeechEngine()
+        engine.voices = [
+            SpeechVoice(id: "apple", name: "Minsu", language: "ko-KR", quality: .premium),
+            SpeechVoice(id: "supertonic:F1", name: "Sori Female 1", language: "ko-KR", quality: .neural)
+        ]
+        let player = SpeakPlayer(engine: engine)
+
+        XCTAssertEqual(player.resolvedVoice(for: nil)?.id, "supertonic:F1")
+        XCTAssertEqual(player.bestVoice?.quality, .neural)
     }
 
     func testResolvedVoicePrefersPremiumOverEnhanced() {

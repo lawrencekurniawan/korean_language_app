@@ -153,7 +153,12 @@ final class SettingsStore {
         ) ?? .builtIn
 
         speakAutoMode = defaults.object(forKey: Keys.speakAutoMode) as? Bool ?? true
-        voiceIdentifier = defaults.string(forKey: Keys.voiceIdentifier) ?? ""
+        let storedVoice = defaults.string(forKey: Keys.voiceIdentifier) ?? ""
+        // Older builds defaulted to Apple's Yuna voice. Yuna is intentionally
+        // retired in favour of the bundled neural voice.
+        voiceIdentifier = storedVoice.localizedCaseInsensitiveContains("yuna")
+            ? ""
+            : storedVoice
         speechRate = Self.double(defaults, Keys.speechRate, default: 0.5, range: 0.3...0.8)
         repeatCount = Self.int(defaults, Keys.repeatCount, default: 1, range: 0...5)
 

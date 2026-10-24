@@ -11,7 +11,8 @@ struct SpeakView: View {
     @State private var showingVoiceSettings = false
     @State private var alertTitle = "Audio unavailable"
     @State private var alertMessage: String?
-    @State private var player = SpeakPlayer()
+
+    private var player: SpeakPlayer { env.speech }
 
     var body: some View {
         @Bindable var settings = env.settings
@@ -440,7 +441,7 @@ private struct VoiceSettingsSheet: View {
             Form {
                 Section {
                     Picker("Voice", selection: $settings.voiceIdentifier) {
-                        Text("Automatic (best installed)").tag("")
+                        Text("Automatic (neural when available)").tag("")
                         if let unavailableVoiceIdentifier {
                             Text("Unavailable voice").tag(unavailableVoiceIdentifier)
                         }
@@ -464,10 +465,13 @@ private struct VoiceSettingsSheet: View {
                     VStack(alignment: .leading, spacing: SoriSpacing.xs) {
                         if settings.voiceIdentifier.isEmpty,
                            let best = player.bestVoice,
-                           best.quality == .standard {
-                            Text("Yuna Enhanced is not installed, so Sori is using \(best.displayName). Download Yuna (Enhanced) or a Premium Korean voice in iOS Settings → Accessibility → Spoken Content → Voices → Korean.")
+                           best.quality == .neural {
+                            Text("Automatic uses \(best.name), the bundled Supertonic neural voice. It runs entirely on this iPhone and works offline.")
+                        } else if let best = player.bestVoice,
+                                  best.quality == .neural {
+                            Text("Neural voices are bundled with Sori and run entirely on this iPhone. Apple voices are available as a fallback.")
                         } else {
-                            Text("Automatic picks the highest-quality Korean voice installed, preferring Yuna on ties.")
+                            Text("The neural voice could not load, so Sori is using \(player.bestVoice?.displayName ?? "an Apple Korean voice"). Apple Premium or Enhanced voices are the next best fallback.")
                         }
                         Text("All voices work offline. Nothing is uploaded or logged.")
                     }

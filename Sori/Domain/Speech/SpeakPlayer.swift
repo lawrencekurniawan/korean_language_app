@@ -16,8 +16,12 @@ final class SpeakPlayer {
     private(set) var speakingText: String?
     private(set) var errorMessage: String?
 
-    init(engine: SpeechEngine = AppleSpeechEngine()) {
+    init(engine: SpeechEngine = NeuralSpeechEngine()) {
         self.engine = engine
+    }
+
+    func prewarm() async {
+        await engine.prewarm()
     }
 
     var voices: [SpeechVoice] {

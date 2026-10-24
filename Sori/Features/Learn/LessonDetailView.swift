@@ -6,9 +6,10 @@ struct LessonDetailView: View {
     let lesson: CurriculumLesson
 
     @State private var player = PersonalAudioPlayer()
-    @State private var revealedAnswers: Set<Int> = []
     @State private var showingImporter = false
     @State private var alertMessage: String?
+
+    private var speaker: SpeakPlayer { env.speech }
 
     var body: some View {
         ScrollView {
@@ -16,6 +17,7 @@ struct LessonDetailView: View {
                 headerCard
                 goalsCard
                 vocabularyCard
+                pronunciationCard
                 grammarSections
                 if !lesson.dialogue.isEmpty {
                     dialogueCard
@@ -39,11 +41,17 @@ struct LessonDetailView: View {
         }
         .onDisappear {
             player.stop()
+            speaker.stop()
         }
         .onChange(of: player.errorMessage) { _, message in
             guard let message else { return }
             alertMessage = message
             player.clearError()
+        }
+        .onChange(of: speaker.errorMessage) { _, message in
+            guard let message else { return }
+            alertMessage = message
+            speaker.clearError()
         }
         .fileImporter(
             isPresented: $showingImporter,
@@ -129,17 +137,76 @@ struct LessonDetailView: View {
                             Divider().overlay(Color.soriBorder)
                         }
                         let item = lesson.vocabulary[index]
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(item.korean)
-                                .font(SoriFont.korean(19))
-                                .foregroundStyle(Color.soriInk)
-                            Spacer(minLength: SoriSpacing.md)
-                            Text(item.english)
-                                .font(SoriFont.callout)
-                                .foregroundStyle(Color.soriSecondary)
-                                .multilineTextAlignment(.trailing)
+                        HStack(alignment: .center, spacing: SoriSpacing.xs) {
+                            InlineSpeakButton(
+                                text: item.korean,
+                                player: speaker,
+                                compact: true
+                            )
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(item.korean)
+                                    .font(SoriFont.korean(19))
+                                    .foregroundStyle(Color.soriInk)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text(item.english)
+                                    .font(SoriFont.caption)
+                                    .foregroundStyle(Color.soriSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            Spacer(minLength: SoriSpacing.xs)
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 7)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Pronunciation
+
+    private var pronunciationCard: some View {
+        SoriCard {
+            VStack(alignment: .leading, spacing: SoriSpacing.sm) {
+                SoriSectionHeader(
+                    "Pronunciation",
+                    subtitle: "Tap the speaker, then say it back"
+                )
+
+                if lesson.pronunciation.isEmpty {
+                    Text("Listen to the vocabulary above and repeat each word aloud.")
+                        .font(SoriFont.caption)
+                        .foregroundStyle(Color.soriSecondary)
+                } else {
+                    VStack(spacing: 0) {
+                        ForEach(lesson.pronunciation.indices, id: \.self) { index in
+                            if index > 0 {
+                                Divider().overlay(Color.soriBorder)
+                            }
+                            let item = lesson.pronunciation[index]
+                            HStack(alignment: .center, spacing: SoriSpacing.sm) {
+                                InlineSpeakButton(
+                                    text: item.korean,
+                                    player: speaker,
+                                    compact: true
+                                )
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(item.korean)
+                                        .font(SoriFont.korean(18))
+                                        .foregroundStyle(Color.soriInk)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Text(item.english)
+                                        .font(SoriFont.caption)
+                                        .foregroundStyle(Color.soriSecondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Text(item.focus)
+                                        .font(SoriFont.caption)
+                                        .foregroundStyle(Color.soriTertiary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .padding(.vertical, 7)
+                        }
                     }
                 }
             }
@@ -151,7 +218,7 @@ struct LessonDetailView: View {
     private var grammarSections: some View {
         VStack(spacing: SoriSpacing.md) {
             ForEach(lesson.grammar) { point in
-                GrammarCard(point: point)
+                GrammarCard(point: point, speaker: speaker)
             }
         }
     }
@@ -165,18 +232,25 @@ struct LessonDetailView: View {
 
                 ForEach(lesson.dialogue.indices, id: \.self) { index in
                     let line = lesson.dialogue[index]
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(line.speaker)
-                            .font(SoriFont.captionStrong)
-                            .foregroundStyle(Color.soriAccent)
-                        Text(line.korean)
-                            .font(SoriFont.korean(19))
-                            .foregroundStyle(Color.soriInk)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Text(line.english)
-                            .font(SoriFont.caption)
-                            .foregroundStyle(Color.soriSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
+                    HStack(alignment: .top, spacing: SoriSpacing.xs) {
+                        InlineSpeakButton(
+                            text: line.korean,
+                            player: speaker,
+                            compact: true
+                        )
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(line.speaker)
+                                .font(SoriFont.captionStrong)
+                                .foregroundStyle(Color.soriAccent)
+                            Text(line.korean)
+                                .font(SoriFont.korean(19))
+                                .foregroundStyle(Color.soriInk)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text(line.english)
+                                .font(SoriFont.caption)
+                                .foregroundStyle(Color.soriSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                     }
                 }
             }
@@ -188,38 +262,22 @@ struct LessonDetailView: View {
     private var practiceCard: some View {
         SoriCard {
             VStack(alignment: .leading, spacing: SoriSpacing.md) {
-                SoriSectionHeader("Practice", subtitle: "Answer, then check")
+                SoriSectionHeader(
+                    "Typed practice",
+                    subtitle: "\(lesson.practice.count) exercises · no multiple choice"
+                )
 
-                ForEach(lesson.practice.indices, id: \.self) { index in
-                    let item = lesson.practice[index]
-                    VStack(alignment: .leading, spacing: SoriSpacing.xs) {
-                        Text(item.prompt)
-                            .font(SoriFont.body)
-                            .foregroundStyle(Color.soriInk)
-                            .fixedSize(horizontal: false, vertical: true)
+                Text("Write each answer in your own words. Closed answers are checked automatically; open responses are compared with a model answer.")
+                    .font(SoriFont.caption)
+                    .foregroundStyle(Color.soriSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                        if revealedAnswers.contains(index) {
-                            HStack(alignment: .top, spacing: 6) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(Color.soriCorrect)
-                                Text(item.answer)
-                                    .font(SoriFont.callout)
-                                    .foregroundStyle(Color.soriInk)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding(SoriSpacing.sm)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                Color.soriCorrect.opacity(0.10),
-                                in: RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            )
-                        } else {
-                            Button("Show answer") {
-                                revealedAnswers.insert(index)
-                            }
-                            .font(SoriFont.captionStrong)
-                            .foregroundStyle(Color.soriAccent)
-                        }
+                VStack(spacing: SoriSpacing.sm) {
+                    ForEach(lesson.practice.indices, id: \.self) { index in
+                        TypedExerciseCard(
+                            item: lesson.practice[index],
+                            number: index + 1
+                        )
                     }
                 }
             }
@@ -442,6 +500,7 @@ struct LessonDetailView: View {
 
 private struct GrammarCard: View {
     let point: CurriculumGrammarPoint
+    let speaker: SpeakPlayer
 
     var body: some View {
         SoriCard {
@@ -468,15 +527,22 @@ private struct GrammarCard: View {
 
                 VStack(alignment: .leading, spacing: SoriSpacing.xs) {
                     ForEach(point.examples, id: \.self) { example in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(example.korean)
-                                .font(SoriFont.korean(18))
-                                .foregroundStyle(Color.soriInk)
-                                .fixedSize(horizontal: false, vertical: true)
-                            Text(example.english)
-                                .font(SoriFont.caption)
-                                .foregroundStyle(Color.soriSecondary)
-                                .fixedSize(horizontal: false, vertical: true)
+                        HStack(alignment: .top, spacing: SoriSpacing.xxs) {
+                            InlineSpeakButton(
+                                text: example.korean,
+                                player: speaker,
+                                compact: true
+                            )
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(example.korean)
+                                    .font(SoriFont.korean(18))
+                                    .foregroundStyle(Color.soriInk)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text(example.english)
+                                    .font(SoriFont.caption)
+                                    .foregroundStyle(Color.soriSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                     }
                 }

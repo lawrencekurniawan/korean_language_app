@@ -64,6 +64,7 @@ struct CurriculumLesson: Identifiable, Decodable, Sendable, Hashable {
     let vocabulary: [CurriculumVocabulary]
     let grammar: [CurriculumGrammarPoint]
     let dialogue: [CurriculumDialogueLine]
+    let pronunciation: [CurriculumPronunciation]
     let practice: [CurriculumPracticeItem]
     let culture: String
     let reference: [String]
@@ -95,9 +96,94 @@ struct CurriculumDialogueLine: Decodable, Sendable, Hashable {
     let english: String
 }
 
-struct CurriculumPracticeItem: Decodable, Sendable, Hashable {
+struct CurriculumPronunciation: Decodable, Sendable, Hashable {
+    let korean: String
+    let english: String
+    let focus: String
+}
+
+enum CurriculumExerciseKind: String, Codable, Sendable, Hashable, CaseIterable {
+    case fillBlank
+    case translateToKorean
+    case translateToEnglish
+    case openResponse
+
+    var title: String {
+        switch self {
+        case .fillBlank: "Fill in the blank"
+        case .translateToKorean: "English → Korean"
+        case .translateToEnglish: "Korean → English"
+        case .openResponse: "Open response"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .fillBlank: "rectangle.and.pencil.and.ellipsis"
+        case .translateToKorean: "arrow.right"
+        case .translateToEnglish: "arrow.left"
+        case .openResponse: "text.bubble"
+        }
+    }
+
+    var placeholder: String {
+        switch self {
+        case .fillBlank: "Type the missing word"
+        case .translateToKorean: "Type your answer in Korean"
+        case .translateToEnglish: "Type your answer in English"
+        case .openResponse: "Write your own answer"
+        }
+    }
+
+    var isOpen: Bool { self == .openResponse }
+}
+
+struct CurriculumPracticeItem: Identifiable, Decodable, Sendable, Hashable {
+    let id: String
+    let kind: CurriculumExerciseKind
     let prompt: String
     let answer: String
+    let acceptedAnswers: [String]
+    let hint: String?
+    let explanation: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, kind, prompt, answer, acceptedAnswers, hint, explanation
+    }
+
+    init(
+        id: String,
+        kind: CurriculumExerciseKind,
+        prompt: String,
+        answer: String,
+        acceptedAnswers: [String] = [],
+        hint: String? = nil,
+        explanation: String? = nil
+    ) {
+        self.id = id
+        self.kind = kind
+        self.prompt = prompt
+        self.answer = answer
+        self.acceptedAnswers = acceptedAnswers
+        self.hint = hint
+        self.explanation = explanation
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let promptValue = try container.decode(String.self, forKey: .prompt)
+        prompt = promptValue
+        id = try container.decodeIfPresent(String.self, forKey: .id) ?? promptValue
+        kind = try container.decodeIfPresent(CurriculumExerciseKind.self, forKey: .kind)
+            ?? .openResponse
+        answer = try container.decode(String.self, forKey: .answer)
+        acceptedAnswers = try container.decodeIfPresent(
+            [String].self,
+            forKey: .acceptedAnswers
+        ) ?? []
+        hint = try container.decodeIfPresent(String.self, forKey: .hint)
+        explanation = try container.decodeIfPresent(String.self, forKey: .explanation)
+    }
 }
 
 // MARK: - Progress

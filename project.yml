@@ -15,8 +15,8 @@ settings:
     SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY: YES
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     CLANG_ENABLE_MODULES: YES
-    MARKETING_VERSION: 0.5.0
-    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 1.1.0
+    CURRENT_PROJECT_VERSION: 2
     IPHONEOS_DEPLOYMENT_TARGET: "18.0"
     TARGETED_DEVICE_FAMILY: "1"
     SUPPORTS_MACCATALYST: NO
@@ -42,6 +42,10 @@ targets:
         excludes:
           - "Info.plist"
           - "**/.DS_Store"
+          - "Resources/Models"
+      - path: Sori/Resources/Models/Supertonic3
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: GRDB
       - package: ZIPFoundation
@@ -49,6 +53,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.lawrencekurniawan.sori
         PRODUCT_NAME: Sori
+        TARGETED_DEVICE_FAMILY: "1"
         INFOPLIST_FILE: Sori/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -78,6 +83,19 @@ targets:
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Sori.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Sori"
         BUNDLE_LOADER: "$(TEST_HOST)"
 
+  SoriUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: SoriUITests
+    dependencies:
+      - target: Sori
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lawrencekurniawan.sori.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: Sori
+
 schemes:
   Sori:
     build:
@@ -92,3 +110,15 @@ schemes:
       targets:
         - name: SoriTests
           parallelizable: true
+  SoriUITests:
+    build:
+      targets:
+        Sori: all
+        SoriUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - name: SoriUITests
+          parallelizable: false

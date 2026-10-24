@@ -14,6 +14,7 @@ final class AppEnvironment {
     let review: ReviewStore
     let usage: UsageTracker
     let backup: BackupService
+    let speech: SpeakPlayer
     let startupError: String?
 
     var libraryStatus: LibraryStatus = .unknown
@@ -33,6 +34,7 @@ final class AppEnvironment {
         self.review = ReviewStore(database: database)
         self.usage = UsageTracker(repository: UsageRepository(database: database))
         self.backup = BackupService(database: database, settings: settings)
+        self.speech = SpeakPlayer(engine: NeuralSpeechEngine())
     }
 
     var isSeedingLibrary: Bool {
@@ -85,6 +87,7 @@ final class AppEnvironment {
         await prepareCurriculum()
         await prepareReview()
         await backup.automaticBackupIfNeeded()
+        await speech.prewarm()
     }
 
     func afterRestore() async {

@@ -4,17 +4,18 @@
 
 It combines four study areas with a structured curriculum:
 
-- **Learn** — a deterministic Vitamin Korean 1 curriculum with Korean Grammar in Use references
+- **Learn** — 15 expanded Vitamin Korean 1 lessons with typed exercises, pronunciation drills, and Korean Grammar in Use references
 - **Practice** — one-minute reading and typing sprints measured in characters per minute (CPM)
-- **Speak** — phrase-by-phrase pronunciation practice with on-device speech synthesis
+- **Speak** — phrase-by-phrase pronunciation practice with a bundled neural Korean voice
 - **Progress** — CPM trends, session history, and time spent per tab
 
-There is no account, no analytics, and no server. Network access is used only when you
-explicitly download a library pack or a subtitle file.
+There is no account, no analytics, and no server. Speech synthesis runs entirely on the
+iPhone. Network access is used only when you explicitly download a library pack or a
+subtitle file.
 
 ## Status
 
-Milestone 8 — Backups, SideStore packaging, and polish. Complete.
+Milestone 9 — Expanded VK1 curriculum, typed practice, and neural TTS. Complete.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
@@ -27,6 +28,7 @@ Milestone 8 — Backups, SideStore packaging, and polish. Complete.
 | M6 | FSRS review for grammar and vocabulary | Complete |
 | M7 | Progress charts, session management, time tracking | Complete |
 | M8 | SideStore IPA, backup/restore, polish | Complete |
+| M9 | Expanded VK1 content, typed exercises, Supertonic neural TTS | Complete |
 
 ## Requirements
 
@@ -39,7 +41,7 @@ Milestone 8 — Backups, SideStore packaging, and polish. Complete.
 ```sh
 xcodegen generate
 xcodebuild -scheme Sori \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
   build
 ```
 
@@ -47,7 +49,19 @@ Run tests:
 
 ```sh
 xcodebuild -scheme Sori \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  test
+```
+
+The unit-test target includes a real CoreML synthesis and playback check against the
+bundled Supertonic model, so the first test run downloads nothing but does use several
+seconds of CPU/GPU time.
+
+Run the UI smoke test (lesson playback, pronunciation rows, and a typed answer):
+
+```sh
+xcodebuild -scheme SoriUITests \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
   test
 ```
 
@@ -69,16 +83,20 @@ signs the IPA with your own Apple ID.
 Sori/
   App/            App entry point, environment, tab shell, splash coordination
   DesignSystem/   Colours, typography, cards, buttons
-  Domain/         Settings, backups, value models, corpus segmentation and filtering
-  Data/           SQLite (GRDB), repositories, importers, network clients
+  Domain/         Settings, backups, value models, corpus filtering, answer checking
+  Data/           SQLite (GRDB), repositories, importers, network clients, speech engines
   Features/       Learn, Practice, Speak, Progress, Settings, backups, Library, Splash
-  Resources/      Assets, localisation catalogue, starter library JSON
-SoriTests/        Unit and importer tests
+  Resources/      Assets, localisation catalogue, starter library, Supertonic CoreML models
+SoriTests/        Unit, content, speech, and importer tests
+SoriUITests/      End-to-end lesson playback and typed-answer smoke test
 scripts/          Seed-library generation and packaging scripts
 ```
 
 `project.yml` is the source of truth for the Xcode project. `Sori.xcodeproj` is generated
 and intentionally ignored.
+
+The bundled Supertonic-3 model is about 131 MB and is copied into `Sori.app/Supertonic3`
+as a folder reference. It is never downloaded at runtime.
 
 ## Starter library
 
@@ -165,43 +183,73 @@ Tap any word chip to hear that word once. Tap **Play phrase** to hear the whole
 phrase with the saved repeat setting: 1–5 times, or loop until you press Stop.
 Voice, speed, repeat, and the Speak font size persist across launches.
 
-Speech is synthesised on-device by Apple's `AVSpeechSynthesizer` behind a small
-`SpeechEngine` protocol, so a neural engine can replace it later. Automatic voice
-selection uses the highest-quality Korean voice installed on the iPhone, with
-Yuna preferred on ties — so a downloaded Yuna Enhanced or Premium voice is used
-as soon as iOS exposes it. The voice sheet lists every Korean voice and says when
-only the Standard voice is present; enhanced voices are installed in iOS
-Settings → Accessibility → Spoken Content → Voices → Korean.
+Speech uses **Supertonic 3 CoreML**, a multilingual flow-matching diffusion TTS
+model, through the `SpeechEngine` protocol. Four bundled Korean styles are
+available: Sori Female 1–3 and Sori Male 1. The default is **Automatic**, which
+chooses a neural voice and works entirely offline. Previous installs that had
+selected Apple's Yuna voice migrate to Automatic automatically.
+
+The first phrase loads the CoreML stages and may take a moment; later phrases use
+a local WAV cache. Text longer than the Korean chunk limit (57 characters) and
+unexpected model errors fall back to the best installed Apple Korean voice, so
+playback never silently disappears. Apple Premium or Enhanced voices can be
+installed in iOS Settings → Accessibility → Spoken Content → Voices → Korean and
+selected explicitly if preferred.
 
 Speak never writes practice sessions, exposure records, or analytics. Nothing is
 uploaded, and no audio is recorded.
 
+The Supertonic model assets are distributed under the BigScience Open RAIL-M
+license and the Swift integration is adapted from FluidAudio (Apache 2.0). See
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and the license files under
+`Sori/Resources/Models/Supertonic3/`.
+
 ## Learn curriculum
 
-Learn follows the **Vitamin Korean 1** sequence in 15 lessons across five chapters:
-Hangeul, introductions, time and dates, places and locations, and the future. Every
-lesson is designed to take 3–5 minutes and stays at TOPIK 1. Explanations are in
-English first, with Korean examples, and no romanisation after Hangul is introduced.
+Learn follows the **Vitamin Korean 1** sequence in 15 expanded lessons across five
+chapters: Hangeul, introductions, time and dates, places and locations, and plans
+and hopes. Every lesson stays at TOPIK 1 and takes about 18–24 minutes. Explanations
+are in English first, with Korean examples, and no romanisation after Hangul is
+introduced.
 
-Each lesson contains learning goals, six vocabulary items, three grammar points,
-focused practice with revealable answers, a culture note, and **Korean Grammar in
-Use: Beginning** topic references. Conversation lessons add a short dialogue. The
-explanations, examples, dialogues, and practice items are original study material
-written for Sori; textbook pages are not included. The curriculum is authored content
-under CC BY-NC-SA 4.0, and its version is shown in Settings.
+The expanded curriculum contains 376 vocabulary entries, 73 grammar points, 116
+pronunciation rows, 101 dialogue lines, and 120 typed exercises. Each lesson has
+5–6 goals, 16–35 vocabulary items, 4–6 grammar points, a short conversation where
+appropriate, a pronunciation section, a culture note, and **Korean Grammar in Use:
+Beginning** references. Play buttons appear beside every vocabulary item, grammar
+example, dialogue line, and pronunciation row.
 
-The Learn tab shows a Continue card for the next unfinished lesson, the review queue,
-chapter progress, a collapsible TOPIK 1–6 roadmap, and the chapter list. Opening a
-lesson marks it in progress; **Mark lesson complete** records it locally in SQLite and
-creates review cards.
+The explanations, examples, dialogues, and exercises are original study material
+written for Sori; textbook pages and textbook audio are not included. The curriculum
+is authored content under CC BY-NC-SA 4.0, and its version is shown in Settings.
+
+### Typed practice
+
+Every lesson ends with eight typed exercises. Four answer styles are used:
+
+- **Fill in the blank** — complete a Korean sentence or grammar form
+- **English → Korean** — produce the Korean sentence yourself
+- **Korean → English** — explain the meaning in English
+- **Open response** — compare forms, explain a rule, or describe a pronunciation
+
+Answers are normalised for punctuation, spacing, case, and common English
+contractions, and lessons can list accepted alternatives. A near miss still shows
+the model answer and a useful explanation rather than only saying “wrong”.
+Open-response questions are never marked wrong: they show a model answer, preserve
+your response, and let you continue.
+
+The Learn tab shows a Continue card for the next unfinished lesson, the review
+queue, chapter progress, a collapsible TOPIK 1–6 roadmap, and the chapter list.
+Opening a lesson marks it in progress; **Mark lesson complete** records it locally
+in SQLite and creates review cards.
 
 ### Spaced repetition
 
-Completing a lesson creates nine review cards: one for each of its three grammar
-points and one for each of its six vocabulary items. The Learn tab shows how many
-cards are due and opens Review. Grammar cards show the point title and pattern on the
-front; vocabulary cards show the Korean word. Both reveal the explanation or English
-gloss plus an example where one is available.
+Completing a lesson creates one review card for each vocabulary item and each
+grammar point, so the number of cards depends on the lesson. The Learn tab shows
+how many cards are due and opens Review. Grammar cards show the point title and
+pattern on the front; vocabulary cards show the Korean word. Both reveal the
+explanation or English gloss plus an example where one is available.
 
 Sori uses an FSRS-5 scheduler with the published default weights and 90% desired
 retention. New cards use 1, 5, and 10 minute learning steps. **Again** returns a card
@@ -270,3 +318,7 @@ material. See [CONTENT-LICENSE.md](CONTENT-LICENSE.md).
 Source code: MIT (see [LICENSE](LICENSE)).
 Authored curriculum: CC BY-NC-SA 4.0.
 Bundled public-domain texts retain their original status.
+Bundled Supertonic-3 model assets: BigScience Open RAIL-M.
+Supertonic Swift integration adapted from FluidAudio: Apache License 2.0.
+
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution and license locations.

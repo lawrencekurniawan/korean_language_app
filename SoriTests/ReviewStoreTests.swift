@@ -25,16 +25,17 @@ final class ReviewStoreTests: XCTestCase {
 
         await store.sync(curriculum: curriculum, completedLessonIDs: ["1-1"])
 
-        XCTAssertEqual(store.cards.count, 9)
-        XCTAssertEqual(store.dueCount, 9)
+        let lesson = try XCTUnwrap(curriculum.lesson(withID: "1-1"))
+        XCTAssertEqual(store.cards.count, lesson.vocabulary.count + lesson.grammar.count)
+        XCTAssertEqual(store.dueCount, lesson.vocabulary.count + lesson.grammar.count)
         XCTAssertTrue(store.cards.allSatisfy { $0.lessonID == "1-1" })
         XCTAssertEqual(
             store.cards.filter { $0.kind == .grammar }.count,
-            3
+            lesson.grammar.count
         )
         XCTAssertEqual(
             store.cards.filter { $0.kind == .vocabulary }.count,
-            6
+            lesson.vocabulary.count
         )
     }
 
@@ -45,8 +46,9 @@ final class ReviewStoreTests: XCTestCase {
 
         await store.sync(curriculum: curriculum, completedLessonIDs: ["1-1"])
 
+        let lesson = try XCTUnwrap(curriculum.lesson(withID: "1-1"))
         let stats = try await database.dashboardStats()
-        XCTAssertEqual(stats.dueCards, 9)
+        XCTAssertEqual(stats.dueCards, lesson.vocabulary.count + lesson.grammar.count)
     }
 
     func testSyncIsIdempotentAndPreservesScheduling() async throws {
@@ -67,7 +69,8 @@ final class ReviewStoreTests: XCTestCase {
         XCTAssertEqual(afterSync.due, scheduled.due)
         XCTAssertEqual(afterSync.state, scheduled.state)
         XCTAssertEqual(afterSync.reps, scheduled.reps)
-        XCTAssertEqual(store.cards.count, 9)
+        let lesson = try XCTUnwrap(curriculum.lesson(withID: "1-1"))
+        XCTAssertEqual(store.cards.count, lesson.vocabulary.count + lesson.grammar.count)
     }
 
     func testSyncRemovesCardsWhenProgressIsReset() async throws {
@@ -75,11 +78,15 @@ final class ReviewStoreTests: XCTestCase {
         let curriculum = try curriculum()
 
         await store.sync(curriculum: curriculum, completedLessonIDs: ["1-1", "1-2"])
-        XCTAssertEqual(store.cards.count, 18)
+        let first = try XCTUnwrap(curriculum.lesson(withID: "1-1"))
+        let second = try XCTUnwrap(curriculum.lesson(withID: "1-2"))
+        let firstCount = first.vocabulary.count + first.grammar.count
+        let secondCount = second.vocabulary.count + second.grammar.count
+        XCTAssertEqual(store.cards.count, firstCount + secondCount)
 
         await store.sync(curriculum: curriculum, completedLessonIDs: ["1-1"])
 
-        XCTAssertEqual(store.cards.count, 9)
+        XCTAssertEqual(store.cards.count, firstCount)
         XCTAssertFalse(store.cards.contains { $0.lessonID == "1-2" })
 
         await store.sync(curriculum: curriculum, completedLessonIDs: [])
@@ -112,7 +119,8 @@ final class ReviewStoreTests: XCTestCase {
 
         await store.sync(curriculum: curriculum, completedLessonIDs: ["1-1"])
 
-        XCTAssertEqual(store.cards.count, 9)
+        let lesson = try XCTUnwrap(curriculum.lesson(withID: "1-1"))
+        XCTAssertEqual(store.cards.count, lesson.vocabulary.count + lesson.grammar.count)
         XCTAssertFalse(store.cards.contains { $0.id == "vocabulary:1-1:stale" })
     }
 
@@ -126,7 +134,8 @@ final class ReviewStoreTests: XCTestCase {
         let card = try XCTUnwrap(store.dueCards.first)
         await store.submit(cardID: card.id, rating: .good, now: now)
 
-        XCTAssertEqual(store.dueCount, 8)
+        let lesson = try XCTUnwrap(curriculum.lesson(withID: "1-1"))
+        XCTAssertEqual(store.dueCount, lesson.vocabulary.count + lesson.grammar.count - 1)
 
         let updated = try XCTUnwrap(store.cards.first { $0.id == card.id })
         XCTAssertEqual(updated.reps, 1)

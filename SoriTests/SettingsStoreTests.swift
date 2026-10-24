@@ -23,6 +23,15 @@ final class SettingsStoreTests: XCTestCase {
         }
     }
 
+    func testStoredYunaVoiceMigratesToAutomaticNeuralSelection() {
+        withStore { _, defaults in
+            defaults.set("com.apple.voice.enhanced.ko-KR.Yuna", forKey: "settings.voiceIdentifier")
+
+            let reloaded = SettingsStore(defaults: defaults)
+            XCTAssertEqual(reloaded.voiceIdentifier, "")
+        }
+    }
+
     func testValuesPersistAcrossInstances() {
         withStore { first, defaults in
             first.appearance = .dark
@@ -34,7 +43,7 @@ final class SettingsStoreTests: XCTestCase {
             first.splashAutoCloseSeconds = 5
             first.keyboardMode = .system
             first.speakAutoMode = false
-            first.voiceIdentifier = "com.apple.voice.enhanced.ko-KR.Yuna"
+            first.voiceIdentifier = "supertonic:F1"
             first.speechRate = 0.65
             first.repeatCount = 3
 
@@ -48,7 +57,7 @@ final class SettingsStoreTests: XCTestCase {
             XCTAssertEqual(second.splashAutoCloseSeconds, 5)
             XCTAssertEqual(second.keyboardMode, .system)
             XCTAssertFalse(second.speakAutoMode)
-            XCTAssertEqual(second.voiceIdentifier, "com.apple.voice.enhanced.ko-KR.Yuna")
+            XCTAssertEqual(second.voiceIdentifier, "supertonic:F1")
             XCTAssertEqual(second.speechRate, 0.65)
             XCTAssertEqual(second.repeatCount, 3)
         }
